@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Net Lifter</title>
+<style>
+body{
+	font-family: Verdana, Geneva, sans-serif;
+}
+
+
+/* Style the list */
+ul.tabbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    position: fixed;
+    bottom: 0;
+}
+
+/* Float the list items side by side */
+ul.tabbar li {float: left;}
+
+/* Style the links inside the list items */
+ul.tabbar li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tabbar li a:hover {background-color: #ddd;}
+
+/* Create an active/current tablink class */
+ul.tabbar li a:focus, .active {background-color: #ccc;}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+
+
+
+
+
+
+#bgbox{
+	position:absolute;
+	width: 1024px;
+	height: 768px;
+	background-color: #eee;
+	z-index: -1;
+}
+textarea{
+	font: 10pt Courier, Courier New, sans-serif;
+}
+#curLifterInfo{
+	background-color: #ccc;
+	border: 1px solid #999;
+	font-size: 200%;
+}
+#curLifterName{
+	font-weight: bold;
+}
+#curLifterAge:before{
+	content: "Age ";
+}
+#curLifterBodyWeight:before{
+	content: "Body wt: ";
+}
+#curLifterWeightClass:before{
+	content: "WtCls ";
+}
+#curLifterDivision:before{
+	content: "Div: ";
+}
+
+#curLiftInfo{
+	background-color: #ccc;
+	border: 1px solid #999;
+	font-size: 200%;
+}
+#curLift{
+}
+#curWeight:after{
+	content: " Kgs";
+}
+#curWeightPounds:before{
+	content: "(";
+	color: #666;
+}
+#curWeightPounds{
+	color: #666;
+}
+#curWeightPounds:after{
+	content: " Lbs)";
+	color: #666;
+}
+#curRackHeight:before{
+	content: "Rack height: ";
+}
+blink {
+  -webkit-animation: blink 1s steps(5, start) infinite;
+  -moz-animation:    blink 1s steps(5, start) infinite;
+  -o-animation:      blink 1s steps(5, start) infinite;
+  animation:         blink 1s steps(5, start) infinite;
+}
+
+@-webkit-keyframes blink {
+  to { visibility: hidden; }
+}
+@-moz-keyframes blink {
+  to { visibility: hidden; }
+}
+@-o-keyframes blink {
+  to { visibility: hidden; }
+}
+@keyframes blink {
+  to { visibility: hidden; }
+}
+.entry_section{
+	margin: 0.5em;
+	padding: 0.5em;
+	border: 1px solid #ccc;
+}
+
+table{
+	border-collapse: collapse;
+}
+td{
+	padding: 0.1em 0.2em 0.1em 0.2em;
+	border: 1px solid #ccc;
+}
+tr.current{
+	background-color: #ccccff;
+}
+td.current{
+	font-weight: bold;
+}
+td.good{
+	color: #009900;
+}
+td.nolift{
+	color: #990000;
+	text-decoration: line-through;
+}
+
+#dlgEntry{
+	background-color: #ffff99;
+	border: 1px solid black;
+	padding: 0.5em;
+	position:fixed;
+	display:none;
+}
+#dlgEntryAttempt{
+	background-color: #ffff99;
+	border: 1px solid black;
+	padding: 0.5em;
+	position:fixed;
+	display:none;
+}
+
+</style>
+</head>
+<body>
+<div id="bgbox"></div>
+
+<ul class="tabbar">
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabSetup')">Setup</a></li>
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabWeighIn')">Weigh-in</a></li>
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabLifting')">Lifting</a></li>
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabSaveRestore')">Save/Restore</a></li>
+</ul>
+
+
+<div id="tabLifting" class="tabcontent">
+
+<div id="secCurrentDisplay">
+
+<table><tbody>
+	<tr id="curLifterInfo">
+		<td width="400"><div id="curLifterName">First Last</div></td>
+		<td width="180"><div id="curLifterAge">26</div></td>
+		<td width="220"><div id="curLifterWeightClass">100</div></td>
+		<td width="224"><div id="curLifterDivision">M-OR</div></td>
+	</tr>
+</tbody>
+</table>
+<table><tbody>
+	<tr id="curLiftInfo">
+		<td width="200"><div id="curLift">Squat 1</div></td>
+		<td width="400"><div><span id="curWeight"></span> <span id="curWeightPounds">0</span></div></td>
+		<td width="400"><div id="curRackHeight">6-2</div></td>
+	</tr>
+</tbody>
+</table>
+<canvas id="myCanvas" width="800" height="400"></canvas>
+
+</div> <!-- id="secCurrentDisplay" -->
+
+
+
+<div id="secCurrentSelection">
+
+<form action="">
+Flight:
+<select id="selFlight" onchange="selFlight_changed()">
+	<option value="A">A</option>
+	<option value="B">B</option>
+	<option value="C">C</option>
+	<option value="D">D</option>
+	<option value="E">E</option>
+	<option value="F">F</option>
+</select>
+Lift:
+<select id="selLift" onchange="selLift_changed()">
+	<option value="SQ">Squat</option>
+	<option value="BP">Bench</option>
+	<option value="DL">Deadlift</option>
+</select>
+Attempt:
+<select id="selAttempt" onchange="selAttempt_changed()">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+</select>
+Lifter:
+<select id="selLifter" onchange="selLifter_changed()">
+<option value="0">First Last</option></select>
+
+<input type="button" value="GOOD" onclick="btnGOOD_clicked()">
+<input type="button" value="NOLIFT" onclick="btnNOLIFT_clicked()">
+
+<input type="text" name="timerMin" id="txtTimerMin" value="1" size="3">:<input type="text" name="timerSec" id="txtTimerSec" size="3">
+<input type="button" value="Reset" onclick="btnTimerReset_clicked()">
+<input type="button" value="Start" id="btnTimerStartStop" onclick="btnTimerStartStop_clicked()">
+<div id="timer">1:00</div>
+</form>
+
+</div> <!-- id="secCurrentSelection" -->
+
+
+
+
+
+
+<div id="secTableDisplay">
+<table>
+<thead id="thdLifterInfo">
+</thead>
+<tbody id="tbdLifterInfo">
+</tbody>
+</table>
+</div> <!-- id="secTableDisplay" -->
+
+</div><!-- tabLifting -->
+
+
+
+
+
+
+<div id="tabWeighIn" class="tabcontent">
+
+<div id="secLifterCards">
+
+
+<h1>Lifter cards</h1>
+
+<select id="selLifterCard" onchange="selLifterCard_changed()">
+<option value="-99">Add new lifter</option>
+</select><br>
+
+<table>
+<tr><td><!-- row 1 -->
+	<table><tr>
+		<td>Platform</td><td>&nbsp;</td>
+		<td>Flight</td><td><input type="text" name="value" id="txtLifterCardFlight"></td>
+		<td>Lot Number</td><td><input type="text" name="value" id="txtLifterCardLotNumber"></td>
+		<td>Meet Date</td><td>&nbsp;</td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 2 -->
+	<table><tr>
+		<th>SCORE CARD</th>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 3 -->
+	<table><tr>
+		<td>Name</td><td><input type="text" name="value" id="txtLifterCardName"></td>
+		<td>Body Weight</td><td><input type="text" name="value" id="txtLifterCardWeight"></td>
+		<td>Age</td><td><input type="text" name="value" id="txtLifterCardAge"></td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 4 -->
+	<table><tr>
+		<td>Team</td><td><input type="text" name="value" id="txtLifterCardTeam"></td>
+		<td>State</td><td><input type="text" name="value" id="txtLifterCardState"></td>
+		<td>Division</td><td><input type="text" name="value" id="txtLifterCardDivision"></td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 5 -->
+	<table><tr>
+		<td>Events</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsPL" value="PL"> PL (Powerlifting)</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsBP" value="BP"> BP (Bench press)</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsDL" value="DL"> DL (Deadlift)</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsPP" value="PP"> PP (Push-pull)</td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 6 -->
+	<table><tr>
+		<td>Squat Bar Height</td><td><input type="text" name="value" id="txtLifterCardSQ_rack"></td>
+		<td>Bench Height</td><td><input type="text" name="value" id="txtLifterCardBP_rack"></td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 7 -->
+	<table>
+		<tr>
+			<th>Attempt:</th>
+			<th>1ST</th>
+			<th>2ND</th>
+			<th>3RD</th>
+			<th>BEST</th>
+			<td>4TH (Does not count towards total)</td>
+		</tr>
+		<tr>
+			<th>Squat</th>
+			<td><input type="text" name="value" id="txtLifterCardSQ_1"><br>
+			<input type="radio" name="LifterCardSQ_1_Status" value="1" id="radLifterCardSQ_1_Good" onclick="radLifterCard_Good_clicked('SQ',1)"> Good
+			<input type="radio" name="LifterCardSQ_1_Status" value="0" id="radLifterCardSQ_1_NotAttempted" onclick="radLifterCard_NotAttempted_clicked('SQ',1)"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_1_Status" value="-1" id="radLifterCardSQ_1_NoLift" onclick="radLifterCard_NoLift_clicked('SQ',1)"> No lift
+			<input type="radio" name="LifterCardSQ_1_Status" value="-2" id="radLifterCardSQ_1_Scratch" onclick="radLifterCard_Scratch_clicked('SQ',1)"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_2"><br>
+			<input type="radio" name="LifterCardSQ_2_Status" value="1" id="radLifterCardSQ_2_Good"> Good
+			<input type="radio" name="LifterCardSQ_2_Status" value="0" id="radLifterCardSQ_2_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_2_Status" value="-1" id="radLifterCardSQ_2_NoLift"> No lift
+			<input type="radio" name="LifterCardSQ_2_Status" value="-2" id="radLifterCardSQ_2_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_3"><br>
+			<input type="radio" name="LifterCardSQ_3_Status" value="1" id="radLifterCardSQ_3_Good"> Good
+			<input type="radio" name="LifterCardSQ_3_Status" value="0" id="radLifterCardSQ_3_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_3_Status" value="-1" id="radLifterCardSQ_3_NoLift"> No lift
+			<input type="radio" name="LifterCardSQ_3_Status" value="-2" id="radLifterCardSQ_3_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_best" readonly="readonly"></td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_4"><br>
+			<input type="radio" name="LifterCardSQ_4_Status" value="1" id="radLifterCardSQ_4_Good"> Good
+			<input type="radio" name="LifterCardSQ_4_Status" value="0" id="radLifterCardSQ_4_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_4_Status" value="-1" id="radLifterCardSQ_4_NoLift"> No lift
+			<input type="radio" name="LifterCardSQ_4_Status" value="-2" id="radLifterCardSQ_4_Scratch"> Scratch<br>
+			</td>
+		</tr>
+		<tr>
+			<th>Bench</th>
+			<td><input type="text" name="value" id="txtLifterCardBP_1"><br>
+			<input type="radio" name="LifterCardBP_1_Status" value="1" id="radLifterCardBP_1_Good"> Good
+			<input type="radio" name="LifterCardBP_1_Status" value="0" id="radLifterCardBP_1_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_1_Status" value="-1" id="radLifterCardBP_1_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_1_Status" value="-2" id="radLifterCardBP_1_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardBP_2"><br>
+			<input type="radio" name="LifterCardBP_2_Status" value="1" id="radLifterCardBP_2_Good"> Good
+			<input type="radio" name="LifterCardBP_2_Status" value="0" id="radLifterCardBP_2_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_2_Status" value="-1" id="radLifterCardBP_2_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_2_Status" value="-2" id="radLifterCardBP_2_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardBP_3"><br>
+			<input type="radio" name="LifterCardBP_3_Status" value="1" id="radLifterCardBP_3_Good"> Good
+			<input type="radio" name="LifterCardBP_3_Status" value="0" id="radLifterCardBP_3_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_3_Status" value="-1" id="radLifterCardBP_3_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_3_Status" value="-2" id="radLifterCardBP_3_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardBP_best" readonly="readonly"></td>
+			<td><input type="text" name="value" id="txtLifterCardBP_4"><br>
+			<input type="radio" name="LifterCardBP_4_Status" value="1" id="radLifterCardBP_4_Good"> Good
+			<input type="radio" name="LifterCardBP_4_Status" value="0" id="radLifterCardBP_4_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_4_Status" value="-1" id="radLifterCardBP_4_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_4_Status" value="-2" id="radLifterCardBP_4_Scratch"> Scratch<br>
+			</td>
+		</tr>
+		<tr>
+			<th>Deadlift</th>
+			<td><input type="text" name="value" id="txtLifterCardDL_1"><br>
+			<input type="radio" name="LifterCardDL_1_Status" value="1" id="radLifterCardDL_1_Good"> Good
+			<input type="radio" name="LifterCardDL_1_Status" value="0" id="radLifterCardDL_1_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_1_Status" value="-1" id="radLifterCardDL_1_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_1_Status" value="-2" id="radLifterCardDL_1_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardDL_2"><br>
+			<input type="radio" name="LifterCardDL_2_Status" value="1" id="radLifterCardDL_2_Good"> Good
+			<input type="radio" name="LifterCardDL_2_Status" value="0" id="radLifterCardDL_2_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_2_Status" value="-1" id="radLifterCardDL_2_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_2_Status" value="-2" id="radLifterCardDL_2_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardDL_3"><br>
+			<input type="radio" name="LifterCardDL_3_Status" value="1" id="radLifterCardDL_3_Good"> Good
+			<input type="radio" name="LifterCardDL_3_Status" value="0" id="radLifterCardDL_3_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_3_Status" value="-1" id="radLifterCardDL_3_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_3_Status" value="-2" id="radLifterCardDL_3_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardDL_best" readonly="readonly"></td>
+			<td><input type="text" name="value" id="txtLifterCardDL_4"><br>
+			<input type="radio" name="LifterCardDL_4_Status" value="1" id="radLifterCardDL_4_Good"> Good
+			<input type="radio" name="LifterCardDL_4_Status" value="0" id="radLifterCardDL_4_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_4_Status" value="-1" id="radLifterCardDL_4_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_4_Status" value="-2" id="radLifterCardDL_4_Scratch"> Scratch<br>
+			</td>
+		</tr>
+		<tr>
+			<th>Total</th>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td><input type="text" name="value" id="txtLifterCard_total" readonly="readonly"></td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+</td></tr>
+</table>
+
+<input type="button" name="Save lifter" value="Save" onclick="btnLifterCardSave_clicked()">
+<input type="button" name="Delete lifter" value="Delete lifter" onclick="btnLifterCardDelete_clicked()">
+
+
+</div> <!-- id="secLifterCards" -->
+
+</div><!-- tabWeighIn -->
+
+<div id="tabSetup" class="tabcontent">
+
+<div id="secStateOther">
+<h1>Platform weight set</h1>
+<p>
+Bar and collar should be first two items, then all the weights in decreasing order.
+The three comma-separated columns should be: name, weight, quantity.
+</p>
+
+<textarea id="txtPlatformWeightSet" rows="10" cols="30">
+bar   , 20   ,  1
+collar,  2.5 ,  2
+50    , 50   ,  2
+45    , 45   ,  0
+25    , 25   , 14
+20    , 20   ,  2
+15    , 15   ,  2
+10    , 10   ,  2
+ 5    ,  5   ,  2
+ 2.5  ,  2.5 ,  2
+ 1.25 ,  1.25,  2
+ 0.5  ,  0.5 ,  2
+ 0.25 ,  0.25,  2
+</textarea>
+<table>
+<thead>
+<tr><th>Name</th><th>Weight</th><th>Quantity</th>
+</thead>
+<tbody id="tbdPlatformWeightSet">
+</tbody>
+</table>
+Weight unit:
+<input type="radio" name="PlatformWeightUnit" value="KG" id="radPlatformWeightUnitKG"> Kgs
+<input type="radio" name="PlatformWeightUnit" value="LB" id="radPlatformWeightUnitLB"> Lbs<br>
+The bar weight specified above is the "default" bar weight.
+Some flights or lifts may use a different weight of bar, and you may specify exceptions here:
+
+<h1>Weight classes</h1>
+<table>
+<tr><th>Men</th><th>Women</th></tr>
+<tr><td>
+<textarea id="txtWeightClassesMen" rows="10" cols="10">
+53
+59
+66
+74
+83
+93
+105
+120
+120+
+</textarea>
+</td><td>
+<textarea id="txtWeightClassesWomen" rows="10" cols="10">
+43
+47
+52
+57
+63
+72
+84
+84+
+</textarea>
+</td></tr>
+</table>
+
+<h1>Displayed columns</h1>
+<textarea id="txtDisplayedColumns" rows="10" cols="10">
+flight
+name
+division
+weight
+age
+weight_class
+wilks
+attempts
+best
+subtotal
+</textarea>
+
+</div> <!-- id="secStateOther" -->
+
+</div><!-- tabSetup -->
+
+
+<div id="tabSaveRestore" class="tabcontent">
+
+<div id="secLifterInfo">
+<h1>Lifter info (program state)</h1>
+<textarea id="txtLifterInfo" rows="30" cols="120" wrap="off">
+A	John McLucas	M-OC	74.8	25		PL	13-out	2-Nov				95		70		102.5
+A	Kyan Angelo	M-J4R	66.9	22		PL	9	11-2				160		102.5		210
+A	Charles Takatsuka	M-OR	65.5	30		PL	9out	8				170		120		212.5
+A	Timothy Wu	M-OR	66.8	30		PL	8out	11-3				60		100		162.5
+A	Ian Gilbert	M-J4R	81.7	23		PL	14out	12-2				145		120		185
+A	Steven Nguyen	M-J4R	85.2	23		PL	11out	11-3				140		115		195
+A	Diego Hernandez	M-OR	87.5	27		PL	13out	12-3				170		110		202.5
+A	David White	M-SMR	79.4	35		PL	14	12-2				167.5		95		200
+B	Chase Brower	M-J4R	88.9	23		PL	12out	12-3				170		125		212.5
+B	Paulo Tanaka	M-J4R	89.1	22		PL	12out	10				215		132.5		242.5
+B	Alexander Campbell	M-OR	96	34		PL	12out	12-3				187.5		160		200
+B	Daniel Dagones	M-OR	87.4	30		PL	13out	14				170		95		205
+B	David Dinh	M-OR	89.3	28		PL	13out	13-3				177.5		115		200
+B	Eugene Chuvyiov	M-OR	99.7	38		PL	14out	12-3				210		150		240
+B	Ivan Juarez	M-OR	88.9	28		PL	12out	12-3				130		110		205
+B	Robbie Sardinia	M-OR	89	31		PL	16out	13-2				237.5		175		270
+B	Martin Jenkins	M-SMR	83.4	37		PL	14out	13-1				100		100		150
+B	Ray Jiminez	M-M2R	88.5	47		PL	11out	10				172.5		90		170
+B	Mark Ying	M-OR	88	24		PL	14out	11				152.5		115		182.5
+C	Tommy Truong	M-J3R	99.4	18		PL	13	13-3				205		97.5		220
+C	Artemio Zambrano	M-J4R	99.5	21		PL	16out	14-2				215		115		260
+C	Tony McCreary	M-OR	99.2	28		PL	16out	13-3				210		155		280
+C	Bryan Hall	M-OR	100	32		PL	16out	12-2				170		125		255
+C	Freeman Levinrad	M-OR	97.5	29		PL	10out	11-3				182.5		125		182.5
+C	James Percy	M-OR	106.9	35		PL	18out	14-3				185		150		247.5
+C	Travis Nelson	M-J4C	105.5	22		PL	13out	11-3				235		165		235
+C	Christian Lee	M-OR	107.7	32		PL	17out	14-4				205		145		240
+C	Marcus Sannadan	M-OC	109.4	25		PL	15	12-3				310		192.5		300
+</textarea>
+</div> <!-- id="secLifterInfo" -->
+
+<form action="">
+<input type="button" value="Update" onclick="btnUpdate_clicked()">
+</form>
+
+<input type="button" name="Autosave" value="Autosave" onclick="btnAutosave_clicked()">
+<input type="button" name="Load Autosave" value="Load Autosave" onclick="btnLoadAutosave_clicked()">
+<input type="button" name="Clear Autosave" value="Clear Autosave" onclick="btnClearAutosave_clicked()"><br>
+
+<input type="button" name="Save State" value="Save State" onclick="btnSaveState_clicked()"><br>
+<input type="file" id="fileLoadState" accept="*.json">
+<input type="button" name="Load State" value="Load State" onclick="btnLoadState_clicked()">
+
+
+<br>
+<input type="button" name="Download import template" value="Download import template" onclick="import_download_template()">
+<input type="file" id="fileImportLifters" accept="*.json">
+<input type="button" name="Import lifters" value="Import lifters" onclick="import_upload_lifters()">
+<br>
+<input type="button" name="Download current results sheet" value="Download current results sheet" onclick="export_download()">
+
+
+</div> <!-- tabSaveRestore -->
+<div id="secInstructions">
+Instructions
+</div> <!-- id="secInstructions" -->
+
+
+
+
+<div id="dlgEntry">
+<input type="text" name="value" id="txtEntry" onfocus="this.select();"><br>
+<input type="button" name="Save" value="Save" id="btnEntrySave">
+<input type="button" name="Cancel" value="Cancel" onclick="dlgEntryCancel_clicked()">
+</div>
+
+<div id="dlgEntryAttempt">
+<input type="text" name="value" id="txtEntryAttempt" onfocus="this.select();"><br>
+<input type="radio" name="Status" value="0" id="radEntryAttemptStatusNotAttempted"> Not attempted<br>
+<input type="radio" name="Status" value="1" id="radEntryAttemptStatusGood"> Good<br>
+<input type="radio" name="Status" value="-1" id="radEntryAttemptStatusNoLift"> No lift<br>
+<input type="radio" name="Status" value="-2" id="radEntryAttemptStatusScratch"> Scratch<br>
+<input type="button" name="Save" value="Save" id="btnEntryAttemptSave">
+<input type="button" name="Cancel" value="Cancel" onclick="dlgEntryAttemptCancel_clicked()">
+
+</div>
+
+
+
+
+<pre>
+todo:
+Export CSV
+Import CSV (download CSV template)
+make bar weight per-flight and per-lift
+make platform weight set more elegantly editable
+add to-fro displayed column selection
+put things on separate tabs
+fixup layout and formatting
+</pre>
+
+
+
+<script>
+
+
+/* tab switching */
+
+
+function switch_tab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the link that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+
+
+/*
+Flight, name, age, division, Body weight (kg), Lot #, RHsq, Sq1-4, RHbp, Bp1-4, Dl1-4, good/no-lift for each
+
+computed:
+Weight class (kg)
+Wilks
+Best of each,
+subtotal
+total
+
+*/
+
+// When a row is selected, it turns into editable fields
+
+var state = {
+	weight_set: [
+		{
+			name: "bar",
+			weight: 20,
+			quantity: 1
+		}
+	],
+	bar_weight: [
+		/*
+		{
+			flight: "A",
+			lift: "SQ",
+			weight: 20
+		}
+		*/
+	],
+	weight_set_units: "KG",
+	weight_classes: {
+		women: [
+			43, 47, 52, 57, 63, 72, 84, "84+"
+		],
+		men: [
+			53, 59, 66, 74, 83, 93, 105, 120, "120+"
+		]
+	},
+	body_weight_units: "KG",
+	lifter_info: [
+		{
+			flight: "A",
+			name: "First Last",
+			age: 32,
+			dob: "",
+			state: "",
+			team: "",
+			division: "M-OR",
+			weight_kg: 154,
+			lot_number: 1,
+			which_lifts: "PL",
+			SQ_rack: "6-2",
+			SQ_1: 150,
+			SQ_1_state: 0, // 0 = not attempted, 1 = good, -1 = nolift
+			// ...
+			SQ_4_state: 0,
+			BP_rack: "5-2",
+			BP_1: 130,
+			BP_1_state: 0,
+			// ...
+			DL_1: 200,
+			DL_1_state: 0
+		}
+	],
+	current: {
+		flight: "A",
+		lift: "SQ",
+		attempt: 1,
+		lifter_id: -1,
+		lifters: []
+	},
+	displayed_columns: [
+		"flight", "name", "division", "weight", "age", "weight_class", "wilks", "attempts", "best", "subtotal"
+	]
+};
+/*
+functions:
+	state_to_text
+	text_to_state
+	update_display - must also set all controls for 'current' updating
+
+
+non-text inputs:
+	current flight combobox: set current.flight, calls update_display
+	current lift combobox: set current.lift, calls update_display
+	current attempt combobox: set current.attempt, calls update_display
+	current person combobox: set current.lifter_id, calls update_display
+	GOOD buttom: set data in lifter_info, update info in current, calls update_display, calls state_to_text
+	NO LIFT buttom: set data in lifter_info, update info in current, calls update_display, calls state_to_text
+
+Main panel at top for setting 'current'
+Bar loading
+Current lifter tables
+Weight converter
+Instructions
+Program state
+Update state button
+*/
+
+
+
+
+//////////////////////////////////////////// Begin Nextlifter
+
+const liftlist = ["SQ","BP","DL"];
+const text_columns = [
+	"flight",
+	"name",
+	"division",
+	"weight",
+	"age",
+	"dob",
+	"which_lifts",
+	"SQ_rack",
+	"BP_rack",
+	"state",
+	"team",
+	"lot_number",
+	"SQ_1", "SQ_1_state",
+	"BP_1", "BP_1_state",
+	"DL_1", "DL_1_state",
+	"SQ_2", "SQ_2_state",
+	"BP_2", "BP_2_state",
+	"DL_2", "DL_2_state",
+	"SQ_3", "SQ_3_state",
+	"BP_3", "BP_3_state",
+	"DL_3", "DL_3_state",
+	"SQ_4", "SQ_4_state",
+	"BP_4", "BP_4_state",
+	"DL_4", "DL_4_state"
+];
+const column_headers = {
+	flight: "Flight",
+	name: "Name",
+	division: "Div",
+	weight: "Wt",
+	age: "Age",
+	dob: "DOB",
+	which_lifts: "Events",
+	SQ_rack: "RH SQ",
+	BP_rack: "RH BP",
+	state: "State",
+	team: "Team",
+	lot_number: "lot#",
+	wilks: "Wilks",
+	weight_class: "WtCls",
+	best: "Best",
+	subtotal: "Subtotal"
+};
+const computed_columns = {
+	wilks: display_wilks,
+	weight_class: get_weight_class,
+	best: get_best,
+	subtotal: get_subtotal
+};
+const import_columns = [
+	'flight',
+	'name',
+	'division',
+	'weight',
+	'age',
+	'dob',
+	'which_lifts',
+	'SQ_rack','BP_rack',
+	'state','team','lot_number',
+	'SQ1','BP1','DL1'
+];
+const export_columns = [
+	'flight',
+	'name',
+	'division',
+	'weight',
+	'age',
+	'dob',
+	'which_lifts',
+	'SQ_rack','BP_rack',
+	'state',
+	'team',
+	'lot_number',
+	'wilks',
+	'weight_class',
+	'SQ1','SQ2','SQ3',
+	'BP1','BP2','BP3',
+	'DL1','DL2','DL3',
+	'total',
+	'SQ4','BP4','DL4'
+];
+
+function get_timestamp(){
+	var today = new Date();
+	var dd = today.getDate();
+	if(dd < 10){ dd = '0' + dd; }else{ dd = '' + dd; }
+	var mm = today.getMonth()+1;
+	if(mm < 10){ mm = '0' + mm; }else{ mm = '' + mm; }
+	var yyyy = today.getFullYear();
+	var hh = '' + today.getHours();
+	var mn = '' + today.getMinutes();
+	return ('' + yyyy + mm + dd + '-' + hh + mn);
+}
+function get_column_header(colname){
+	var ret = column_headers[colname];
+	if(!ret){
+		ret = colname;
+	}
+	return ret;
+}
+
+function textify(stuff){
+	if(stuff){ return '' + stuff; }
+	return '';
+}
+function check_attempt_weight(weight){
+	// weight must be multiple of 2.5 except for record setters
+	var x = weight/2.5
+	if(Math.abs(x - Math.round(x)) > 1e-6){
+		alert("Weight must be a multiple of 2.5 unless this is a record attempt");
+	}
+}
+function text_to_table(str){
+	var tab = [];
+	var lines = str.split(/\r\n|\n/);
+	for(var i = 0; i < lines.length; ++i){
+		if(lines[i].match(/^\s*$/)){ break; }
+		var fields = lines[i].split(/,|\t/);
+		tab[i] = [];
+		for(var j = 0; j < fields.length; ++j){
+			tab[i][j] = fields[j].trim();
+		}
+	}
+	return tab;
+}
+function table_to_text(tab){
+	var str = '';
+	const m = tab.length; // m rows
+	for(var i = 0; i < m; ++i){
+		const n = tab[i].length; // n cols
+		for(var j = 0; j+1 < n; ++j){
+			str += tab[i][j] + ', ';
+		}
+		str += tab[i][j] + '\n';
+	}
+	return str;
+}
+
+function get_weight_class(curlifter){
+	const division = curlifter.division;
+	const body_weight = Number(curlifter.weight);
+	var cls = [];
+	if('M' == division.charAt(0)){
+		cls = state.weight_classes.men;
+	}else{
+		cls = state.weight_classes.women;
+	}
+	const m = cls.length;
+	var i = 0;
+	for(i = 0; i < m; ++i){
+		if(body_weight <= cls[i] || ("string" === typeof cls[i] && cls[i].match(/\+/))){
+			break;
+		}
+	}
+	return cls[i];
+}
+function get_wilks(curlifter){
+	const division = curlifter.division;
+	const x = Number(curlifter.weight);
+	const c = {
+		men: [-216.0475144, 16.2606339, -0.002388645, -0.00113732, 7.01863E-06, -1.291E-08],
+		women: [ 594.31747775582, -27.23842536447, 0.82112226871, -0.00930733913, 4.731582E-05, -9.054E-08 ]
+	};
+	var coeffs;
+	if('M' == division.charAt(0)){
+		coeffs = c.men;
+	}else{
+		coeffs = c.women;
+	}
+	var sum = coeffs[5];
+	sum *= x; sum += coeffs[4];
+	sum *= x; sum += coeffs[3];
+	sum *= x; sum += coeffs[2];
+	sum *= x; sum += coeffs[1];
+	sum *= x; sum += coeffs[0];
+	return 500/sum;
+}
+function display_wilks(curlifter){
+	var wilks = get_wilks(curlifter);
+	return textify(Math.round(wilks*10000)*1e-4).replace(/(\.....)0+[1-9]$/, "$1");
+}
+function get_best_by_lift(curlifter, lift){
+	var best = 0;
+	for(var iattempt = 1; iattempt <= 3; ++iattempt){
+		var lift_attempt = lift + "_" + iattempt;
+		if(curlifter[lift_attempt] > best){
+			if(1 == curlifter[lift_attempt + "_state"]){
+				best = curlifter[lift_attempt];
+			}
+		}
+	}
+	return best;
+}
+function get_best(curlifter){
+	return get_best_by_lift(curlifter, state.current.lift);
+}
+function get_subtotal(curlifter){
+	return Number(get_best_by_lift(curlifter, "SQ"))
+	+ Number(get_best_by_lift(curlifter, "BP"))
+	+ Number(get_best_by_lift(curlifter, "DL"));
+}
+
+function cell_clicked(ev, id, colname){
+	document.getElementById('dlgEntryAttempt').style.display = 'none';
+	var dlg = document.getElementById('dlgEntry');
+	dlg.style.display = "block";
+	dlg.style.left = ev.clientX + "px";
+	dlg.style.top = ev.clientY + "px";
+	document.getElementById('txtEntry').value = state.lifter_info[id][colname];
+	document.getElementById('btnEntrySave').onclick = (function(){
+		var my_id = id;
+		var my_colname = colname;
+		return function(){ return dlgEntrySave_clicked(my_id, my_colname); }
+	})();
+	document.getElementById('txtEntry').focus();
+	return false;
+}
+function cell_attempt_clicked(ev, id, lift_attempt){
+	document.getElementById('dlgEntry').style.display = 'none';
+	var dlg = document.getElementById('dlgEntryAttempt');
+	dlg.style.display = "block";
+	dlg.style.left = ev.clientX + "px";
+	dlg.style.top = ev.clientY + "px";
+	var existing_value = state.lifter_info[id][lift_attempt];
+	if(existing_value > 0){
+		document.getElementById('txtEntryAttempt').value = existing_value;
+	}else{
+		document.getElementById('txtEntryAttempt').value = "";
+	}
+	var status = state.lifter_info[id][lift_attempt + "_state"];
+	document.getElementById('radEntryAttemptStatusNotAttempted').checked = (!status);
+	document.getElementById('radEntryAttemptStatusGood').checked = (1 == status);
+	document.getElementById('radEntryAttemptStatusNoLift').checked = (-1 == status);
+	document.getElementById('btnEntryAttemptSave').onclick = (function(){
+		var my_id = id;
+		var my_lift_attempt = lift_attempt;
+		return function(){ return dlgEntryAttemptSave_clicked(my_id, my_lift_attempt); }
+	})();
+	document.getElementById('txtEntryAttempt').focus();
+	return false;
+}
+
+function add_computed_columns(){
+	const m = state.lifter_info.length;
+	for(var i = 0; i < m; ++i){
+		for(colname in computed_columns){
+			state.lifter_info[i][colname] = computed_columns[colname];
+		}
+	}
+}
+
+function lifter_info_from_text(text){
+	var arr = text_to_table(document.getElementById('txtPlatformWeightSet').value);
+	state.weight_set = [];
+	for(var i = 0; i < arr.length; ++i){
+		state.weight_set[i] = {};
+		state.weight_set[i].name   = arr[i][0];
+		state.weight_set[i].weight = arr[i][1];
+		state.weight_set[i].count  = arr[i][2];
+	}
+
+	arr = text_to_table(document.getElementById('txtWeightClassesMen').value);
+	state.weight_classes.men = [];
+	for(var i = 0; i < arr.length; ++i){
+		state.weight_classes.men[i] = arr[i][0];
+	}
+	arr = text_to_table(document.getElementById('txtWeightClassesWomen').value);
+	state.weight_classes.women = [];
+	for(var i = 0; i < arr.length; ++i){
+		state.weight_classes.women[i] = arr[i][0];
+	}
+
+
+	var lines = text.split(/\r\n|\n/);
+	//console.log("Parsing " + lines.length + " lines...");
+	for(var i = 0; i < lines.length; ++i){
+		if(lines[i].match(/^\s*$/)){ break; }
+		var fields = lines[i].split(/,|\t/);
+		state.lifter_info[i] = {};
+		for(var j = 0; j < fields.length; ++j){
+			if(j >= text_columns.length){ break; }
+			state.lifter_info[i][text_columns[j]] = fields[j].trim();
+		}
+	}
+	add_computed_columns();
+	arr = text_to_table(document.getElementById("txtDisplayedColumns").value);
+	for(var i = 0; i < arr.length; ++i){
+		state.displayed_columns[i] = arr[i][0];
+	}
+}
+function lifter_info_to_text(delim){
+	var str = '';
+	const m = state.lifter_info.length; // m rows
+	for(var i = 0; i < m; ++i){
+		const n = state.lifter_info[i].length; // n cols
+		var j = 0;
+		for(j = 0; j+1 < text_columns.length; ++j){
+			str += state.lifter_info[i][text_columns[j]] + delim;
+		}
+		str += state.lifter_info[i][text_columns[j]] + '\n';
+	}
+	return str;
+}
+function events_contains(event_str, liftstr){
+	const evtab = {
+		PL: ["SQ", "BP", "DL"],
+		BP: [      "BP"      ],
+		DL: [            "DL"],
+		PP: [      "BP", "DL"]
+	};
+	var evlist = event_str.split("+");
+	for(var i = 0; i < evlist.length; ++i){
+		var ev = evlist[i];
+		for(var j = 0; j < evtab[ev].length; ++j){
+			if(evtab[ev][j] == liftstr){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+function plate_count(weight){
+	const n = state.weight_set.length;
+	var remaining_weight_4 = Math.round(weight*4);
+	var counts = [];
+	for(var i = 0; i < n; ++i){
+//console.log('Plate: ' + state.weight_set[i].name + ', weight: ' + state.weight_set[i].weight + ', count: ' + state.weight_set[i].count);
+		counts[i] = 0;
+		var curcount = state.weight_set[i].count;
+		var cur_weight_4 = Math.round(state.weight_set[i].weight*4);
+//console.log(remaining_weight_4/4 + ' ' + cur_weight_4/4);
+		var num_to_use_at_a_time = ((state.weight_set[i].name == 'bar') ? 1 : 2);
+		while(remaining_weight_4 >= num_to_use_at_a_time*cur_weight_4 && curcount > 0){
+			counts[i] += num_to_use_at_a_time;
+			remaining_weight_4 -= num_to_use_at_a_time*cur_weight_4;
+			curcount -= num_to_use_at_a_time;
+		}
+	}
+	return counts;
+}
+
+function base_weight(){
+	var weight = 0;
+	for(var i = 0; i < state.weight_set.length; ++i){
+		if(state.weight_set[i].name == 'bar'){ weight += Number(state.weight_set[i].weight); break; }
+		if(state.weight_set[i].name == 'collar'){ weight += 2*Number(state.weight_set[i].weight); break; }
+	}
+	return weight;
+}
+function sort_by_weight(a,b){ // a and b are lifter id's
+	var lift_attempt = state.current.lift + "_" + state.current.attempt;
+	var lift_attempt_next = state.current.lift + "_" + (state.current.attempt+1);
+	var awn = Number(state.lifter_info[a][lift_attempt_next]);
+	var bwn = Number(state.lifter_info[b][lift_attempt_next]);
+	var as = state.lifter_info[a][lift_attempt + "_state"];
+	var bs = state.lifter_info[b][lift_attempt + "_state"];
+	var aw = Number(state.lifter_info[a][lift_attempt]);
+	var bw = Number(state.lifter_info[b][lift_attempt]);
+	// all scratch goes to end
+	if(-2 == as && -2 != bs){
+		return 1;
+	}else if(-2 == bs && -2 != as){
+		return -1;
+	}
+	if(awn && !bwn){
+		return -1;
+	}else if(!awn && bwn){
+		return 1;
+	}else if(awn && bwn){
+		aw = awn;
+		bw = bwn;
+	}
+	// all not attempted with NO NUMBER goes next to end
+	if(!state.lifter_info[a][lift_attempt] && state.lifter_info[b][lift_attempt]){
+		return 1;
+	}else if(!state.lifter_info[b][lift_attempt] && state.lifter_info[a][lift_attempt]){
+		return -1;
+	}
+	// all else sorts by weight then by lot number
+	if(aw < bw){
+		return -1;
+	}else if(aw > bw){
+		return 1;
+	}
+	return (Number(state.lifter_info[a].lot_number) - Number(state.lifter_info[b].lot_number));
+	/*
+	Divide set into two halves:
+		first half is people that already lifted in current attempt
+			put all scratch at end
+		second half is people that have yet to lift in current attempt
+			sort by increasing weight, then lot number
+	*/
+}
+
+function drawPlates(weight){
+	const plate_sizes = [
+		{ name: 'bar'  , size: [ 6     ,1.1    ], color: "#DDDDDD", color2: "#888888" },
+		{ name: '50'   , size: [ 1.875 ,17.75  ], color: "#00DD00", color2: "#008800" }, // green
+		{ name: '45'   , size: [ 2     ,17.75  ], color: "#FFDD00", color2: "#AA8800" }, // gold
+		{ name: '25'   , size: [ 1     ,17.75  ], color: "#EE0000", color2: "#880000" }, // red
+		{ name: '20'   , size: [ 0.75  ,17.75  ], color: "#0000DD", color2: "#000088" }, // blue
+		{ name: '15'   , size: [ 0.8125,15.375 ], color: "#DDDD00", color2: "#888800" }, // yellow
+		{ name: '10'   , size: [ 0.8125,12.5   ], color: "#555555", color2: "#000000" }, // black
+		{ name:  '5'   , size: [ 0.8125,8.875  ], color: "#555555", color2: "#000000" }, // black
+		{ name:  '2.5' , size: [ 0.625 ,7.5    ], color: "#555555", color2: "#000000" }, // black
+		{ name:  '1.25', size: [ 0.5   ,6.3125 ], color: "#555555", color2: "#000000" }, // black
+		{ name:  '0.5' , size: [ 0.3125,5.3125 ], color: "#555555", color2: "#000000" }, // black
+		{ name:  '0.25', size: [ 0.25  ,5      ], color: "#DDDDDD", color2: "#888888" }, //stainless
+		{ name:  'collar', size: [ 2,4 ], color: "#FFFFFF", color2: "#BBBBBB" } // stainless
+	];
+	const margin = 15;
+	const w_expansion = 1.5;
+	var origin = [ 0, 190 ];
+	var ps = 20; // plate scaling
+	var h_max = 17.75*ps;
+
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+	ctx.clearRect(0,0,800,600);
+
+	if(weight < base_weight()){ return; }
+	var count = plate_count(weight);
+
+	ctx.font = "30px Arial";
+	var text_raise = 0;
+	for(var i = 0; i < plate_sizes.length; ++i){
+		var num_needed = 0;
+		for(var j = 0; j < state.weight_set.length; ++j){
+			if(state.weight_set[j].name == plate_sizes[i].name){
+				num_needed = count[j];
+				break;
+			}
+		}
+		if(plate_sizes[i].name != 'bar'){
+			num_needed /= 2;
+		}
+		if(num_needed < 1){ continue; }
+		if(i > 7){ text_raise += 30; }
+		var w = plate_sizes[i].size[0]*ps*w_expansion;
+		var h = plate_sizes[i].size[1]*ps;
+		var grd = ctx.createLinearGradient(0,0,0,h);
+		grd.addColorStop(0, plate_sizes[i].color2);
+		grd.addColorStop(0.5, plate_sizes[i].color);
+		grd.addColorStop(1, plate_sizes[i].color2);
+		ctx.fillStyle = grd;
+		for(var j = 0; j < num_needed; ++j){
+			ctx.strokeStyle = "#000000";
+			ctx.strokeRect(origin[0],origin[1]-0.5*h,w,h);
+			ctx.fillRect(origin[0],origin[1]-0.5*h,w,h);
+			if(i > 7){
+				ctx.fillStyle = "#000000";
+			}
+			ctx.fillText(plate_sizes[i].name, origin[0], 400 - text_raise);
+			origin[0] += w+margin;
+		}
+		if(i == 3 && num_needed > 1){
+			ctx.fillText(num_needed + ' reds', 600, 30);
+		}
+	}
+	// draw the bar some more
+	{
+		var w = plate_sizes[0].size[1]*ps*w_expansion;
+		var h = plate_sizes[0].size[1]*ps;
+		var grd = ctx.createLinearGradient(0,0,0,h);
+		grd.addColorStop(0, plate_sizes[0].color2);
+		grd.addColorStop(0.5, plate_sizes[0].color);
+		grd.addColorStop(1, plate_sizes[0].color2);
+		ctx.fillStyle = grd;
+		ctx.strokeStyle = "#000000";
+		ctx.strokeRect(origin[0],origin[1]-0.5*h,w,h);
+		ctx.fillRect(origin[0],origin[1]-0.5*h,w,h);
+	}
+}
+
+function drawTable(id_list){
+	// generate header row
+	var t = document.getElementById("thdLifterInfo");
+	t.innerHTML = "";
+	var header_row = t.insertRow(0);
+	var icol = 0;
+	var iattempt = 0;
+	for(var i = 0; i < state.displayed_columns.length; ++i){
+		var colname = state.displayed_columns[i];
+		if("attempts" == colname){
+			for(var j = 0; j < 4; ++j){
+				iattempt++;
+				var cell = header_row.insertCell(icol++);
+				var header_text = state.current.lift + " " + iattempt;
+				cell.innerHTML = header_text;
+				if(iattempt == state.current.attempt){
+					cell.className = "current";
+				}
+			}
+		}else{
+			var cell = header_row.insertCell(icol++);
+			cell.innerHTML = get_column_header(colname);
+		}
+	}
+
+	// generate body rows
+	t = document.getElementById("tbdLifterInfo");
+	t.innerHTML = "";
+
+	const m = id_list.length
+	for(var i = 0; i < m; ++i){
+		var id = id_list[i];
+		var row = t.insertRow(i);
+
+		if(state.current.lifter_id == id_list[i]){
+			row.className = "current";
+		}
+
+		var icol = 0;
+		var iattempt = 0;
+		for(var j = 0; j < state.displayed_columns.length; ++j){
+			var colname = state.displayed_columns[j];
+			if("attempts" == colname){
+				for(var k = 0; k < 4; ++k){
+					iattempt++;
+					var cell = row.insertCell(icol++);
+					var lift_attempt = state.current.lift + "_" + iattempt;
+					var attempt_weight = state.lifter_info[id][lift_attempt];
+					if(attempt_weight){
+						cell.innerHTML = attempt_weight;
+					}
+					if(iattempt == state.current.attempt){
+						cell.className = "current";
+					}
+					switch(state.lifter_info[id][lift_attempt + "_state"]){
+					case 1: cell.className += " good"; break;
+					case -1: cell.className += " nolift"; break;
+					case -2: cell.className += " scratch"; break;
+					default: break;
+					}
+					cell.onclick = (function(){
+						var my_id = id; var my_lift_attempt = lift_attempt;
+						return function(ev){ cell_attempt_clicked(ev, my_id, my_lift_attempt); }
+					})();
+				}
+			}else{
+				var cell = row.insertCell(icol++);
+				if("function" === typeof state.lifter_info[id][colname]){
+					cell.innerHTML = state.lifter_info[id][colname](state.lifter_info[id]);
+				}else{
+					cell.innerHTML = state.lifter_info[id][colname];
+					cell.onclick = (function(){
+						var my_id = id; var my_colname = colname;
+						return function(ev){ cell_clicked(ev, my_id, my_colname); }
+					})();
+				}
+			}
+		}
+	}
+}
+
+function update_display(){
+	// First update the controls
+	//// Update flight dropdown
+	var flights = {};
+	const m = state.lifter_info.length;
+	for(var i = 0; i < m; ++i){
+		flights[state.lifter_info[i].flight] = 1;
+	}
+	var c = document.getElementById("selFlight");
+	var c_count = c.options.length;
+	for(var i = c_count-1; i >= 0; --i){
+		c.removeChild(c.options[i]);
+	}
+	for(var flight in flights){
+		var opt = document.createElement("option");
+		opt.appendChild(document.createTextNode(flight));
+		opt.value = flight;
+		c.appendChild(opt);
+	}
+
+	//// Check to see if current flight is valid, and select when found
+	var c = document.getElementById("selFlight");
+	var c_count = c.options.length;
+	var found = false;
+	for(var i = 0; i < c_count; ++i){
+		if(state.current.flight == c.options[i].text){
+			c.selectedIndex = i;
+			found = true;
+		}
+	}
+	if(!found){
+		c.selectedIndex = 0;
+		state.current.flight = c.options[0].value;
+	}
+
+	var c = document.getElementById("selLift");
+	var c_count = c.options.length;
+	var found = false;
+	for(var i = 0; i < c_count; ++i){
+		if(state.current.lift == c.options[i].value){
+			c.selectedIndex = i;
+			found = true;
+		}
+	}
+	if(!found){
+		c.selectedIndex = 0;
+		state.current.lift = c.options[0].value;
+	}
+
+	var c = document.getElementById("selAttempt");
+	var c_count = c.options.length;
+	var found = false;
+	for(var i = 0; i < c_count; ++i){
+		if(state.current.attempt == c.options[i].value){
+			c.selectedIndex = i;
+			found = true;
+		}
+	}
+	if(!found){
+		c.selectedIndex = 0;
+		state.current.attempt = c.options[0].value;
+	}
+
+
+	state.current.lifters = [];
+
+	// Update lifter set from current state
+	var c = document.getElementById("selLifter");
+	var c_count = c.options.length;
+	for(var i = c_count-1; i >= 0; --i){
+		c.removeChild(c.options[i]);
+	}
+	for(var i = 0; i < m; ++i){
+		if(state.lifter_info[i].flight != state.current.flight){ continue; }
+		var doing_this_lift = events_contains(state.lifter_info[i].which_lifts, state.current.lift);
+		if(!doing_this_lift){ continue; }
+		state.current.lifters.push(i);
+	}
+	// sort lifters by weight of current attempt, then by lot number
+	state.current.lifters.sort(sort_by_weight);
+	var found = false;
+	for(var i = 0; i < state.current.lifters.length; ++i){
+		var id = state.current.lifters[i];
+		var opt = document.createElement("option");
+		var name = state.lifter_info[id].name;
+
+		opt.appendChild(document.createTextNode(name));
+		opt.value = id;
+		c.appendChild(opt);
+
+		// Set current lifter to lower weight that has not been attempted yet
+		var lift_attempt_status = state.current.lift + "_" + state.current.attempt + "_state";
+		if(!found && !state.lifter_info[id][lift_attempt_status]){
+			state.current.lifter_id = id;
+			c.selectedIndex = c.length - 1;
+			found = true;
+		}
+		/*
+		if(id == state.current.lifter_id){
+			c.selectedIndex = c.length - 1;
+			found = 1;
+		}
+		*/
+	}
+	/*
+	if(!found){
+		state.current.lifter_id = state.current.lifters[0];
+		c.selectedIndex = 0;
+	}*/
+
+
+	// Update the display portion
+	var curlifter = state.lifter_info[state.current.lifter_id];
+	if(curlifter){
+		var body_weight = curlifter.weight;
+		if("KG" == state.body_weight_units){
+			body_weight = curlifter.weight;
+		}else{
+			body_weight = Math.round(body_weight*22.0462)/10;
+		}
+		var curlift = '';
+		switch(state.current.lift){
+		case 'SQ': curlift = 'Squat'; break;
+		case 'BP': curlift = 'Bench'; break;
+		case 'DL': curlift = 'Deadlift'; break;
+		default: break;
+		}
+		var cur_attempt_weight = curlifter[state.current.lift+"_"+state.current.attempt];
+		var rack_height = '';
+		if("DL" != state.current.lift){
+			rack_height = curlifter[state.current.lift + "_rack"];
+		}
+
+		document.getElementById('curLifterName').innerHTML = textify(curlifter.name);
+		//document.getElementById('curLifterBodyWeight').innerHTML = textify(body_weight) + ' kg';
+		document.getElementById('curLifterWeightClass').innerHTML = textify(get_weight_class(curlifter)) + ' kg';
+		document.getElementById('curLifterAge').innerHTML = textify(curlifter.age);
+		document.getElementById('curLifterDivision').innerHTML = textify(curlifter.division);
+		document.getElementById('curLift').innerHTML = curlift + ' ' + state.current.attempt;
+		document.getElementById('curWeight').innerHTML = cur_attempt_weight;
+		document.getElementById('curWeightPounds').innerHTML = Math.round(cur_attempt_weight*22.0462)/10;
+		document.getElementById('curRackHeight').innerHTML = textify(rack_height);
+	}
+
+	// Update the cards interface
+	var c = document.getElementById("selLifterCard");
+	var prev_selected = c.selectedIndex;
+	var c_count = c.options.length;
+	for(var i = c_count-1; i > 0; --i){
+		c.removeChild(c.options[i]);
+	}
+	var dropdown_ids = [];
+	for(var i = 0; i < m; ++i){
+		dropdown_ids.push(i);
+	}
+	dropdown_ids.sort(function(a,b){
+		if(state.lifter_info[a].flight < state.lifter_info[b].flight){
+			return -1;
+		}else if(state.lifter_info[a].flight > state.lifter_info[b].flight){
+			return  1;
+		}else{
+			if(state.lifter_info[a].name < state.lifter_info[b].name){
+				return -1;
+			}else if(state.lifter_info[a].name > state.lifter_info[b].name){
+				return 1;
+			}
+		}
+		return 0;
+	});
+	for(var i = 0; i < m; ++i){
+		var opt = document.createElement("option");
+		var id = dropdown_ids[i];
+		var optname = state.lifter_info[id].flight + " " + state.lifter_info[id].name + " " + state.lifter_info[id].division;
+		opt.appendChild(document.createTextNode(optname));
+		opt.value = id;
+		c.appendChild(opt);
+		if(prev_selected == i){
+			c.selectedIndex = i;
+		}
+	}
+	update_card_display();
+	drawPlates(cur_attempt_weight);
+
+
+	drawTable(state.current.lifters);
+}
+
+
+function btnUpdate_clicked(){
+	var text = document.getElementById("txtLifterInfo").value;
+	lifter_info_from_text(text);
+	update_display();
+	return false;
+}
+function advance_lifter(){
+	if(state.current.attempt > 4){ return; } // safeguard to prevent infinite loops
+	const m = state.current.lifters.length;
+	const lift_attempt = state.current.lift + "_" + state.current.attempt;
+
+	// advance
+	for(var i = 0; i < m; ++i){
+		if(state.current.lifter_id == state.current.lifters[i]){
+			if(i+1 == m){
+				state.current.attempt++;
+				update_display(); // call this to update current.lifters
+				state.current.lifter_id = state.current.lifters[0];
+			}else{
+				state.current.lifter_id = state.current.lifters[i+1];
+			}
+			break;
+		}
+	}
+	// keep advancing if scratched
+	if(-2 == state.lifter_info[state.current.lifter_id][lift_attempt+"_state"]){
+		advance_lifter();
+	}
+}
+function set_lift_state(good_or_not){
+	const lift_attempt = state.current.lift + "_" + state.current.attempt;
+	if(!state.lifter_info[state.current.lifter_id][lift_attempt]){ return; }
+	state.lifter_info[state.current.lifter_id][lift_attempt + "_state"] = good_or_not;
+	advance_lifter();
+	update_display();
+}
+function btnGOOD_clicked(){
+	set_lift_state(1);
+	return false;
+}
+function btnNOLIFT_clicked(){
+	set_lift_state(-1);
+	return false;
+}
+function selFlight_changed(){
+	state.current.flight = document.getElementById("selFlight").value;
+	update_display();
+}
+function selLift_changed(){
+	state.current.lift = document.getElementById("selLift").value;
+	update_display();
+}
+function selAttempt_changed(){
+	state.current.attempt = document.getElementById("selAttempt").value;
+	update_display();
+}
+function selLifter_changed(){
+	state.current.lifter_id = document.getElementById("selLifter").value;
+	update_display();
+}
+
+function dlgEntryCancel_clicked(){
+	var dlg = document.getElementById('dlgEntry');
+	dlg.style.display = 'none';
+}
+function dlgEntrySave_clicked(id, colname){
+	var dlg = document.getElementById('dlgEntry');
+	state.lifter_info[id][colname] = document.getElementById('txtEntry').value;
+	dlg.style.display = 'none';
+	update_display();
+	return false;
+}
+function dlgEntryAttemptCancel_clicked(){
+	var dlg = document.getElementById('dlgEntryAttempt');
+	dlg.style.display = 'none';
+}
+function dlgEntryAttemptSave_clicked(id, lift_attempt){
+	var dlg = document.getElementById('dlgEntryAttempt');
+	state.lifter_info[id][lift_attempt] = document.getElementById('txtEntryAttempt').value;
+	check_attempt_weight(state.lifter_info[id][lift_attempt]);
+	if(document.getElementById('radEntryAttemptStatusNotAttempted').checked){
+		state.lifter_info[id][lift_attempt + "_state"] = 0;
+	}else if(document.getElementById('radEntryAttemptStatusGood').checked){
+		state.lifter_info[id][lift_attempt + "_state"] = 1;
+	}else if(document.getElementById('radEntryAttemptStatusNoLift').checked){
+		state.lifter_info[id][lift_attempt + "_state"] = -1;
+	}else if(document.getElementById('radEntryAttemptStatusScratch').checked){
+		state.lifter_info[id][lift_attempt + "_state"] = -2;
+		state.lifter_info[id][lift_attempt] = "--";
+		if('2' == lift_attempt[lift_attempt.length-1]){
+			var key = lift_attempt.substring(0, lift_attempt.length-1) + "3";
+			state.lifter_info[id][key] = "--";
+			state.lifter_info[id][key + "_state"] = -2;
+		}
+	}
+	dlg.style.display = 'none';
+	update_display();
+	return false;
+}
+function update_card_display(){
+	const id = document.getElementById('selLifterCard').value;
+	const curlifter = state.lifter_info[id];
+	if(!curlifter){
+		clear_lifter_card();
+		return;
+	}
+	// populate fields
+	document.getElementById("txtLifterCardFlight").value = curlifter.flight;
+	document.getElementById("txtLifterCardLotNumber").value = curlifter.lot_number;
+	document.getElementById("txtLifterCardName").value = curlifter.name;
+	document.getElementById("txtLifterCardWeight").value = curlifter.weight;
+	document.getElementById("txtLifterCardAge").value = curlifter.age;
+	document.getElementById("txtLifterCardTeam").value = curlifter.team;
+	document.getElementById("txtLifterCardState").value = curlifter.state;
+	document.getElementById("txtLifterCardDivision").value = curlifter.division;
+	document.getElementById("txtLifterCardSQ_rack").value = curlifter.SQ_rack;
+	document.getElementById("txtLifterCardBP_rack").value = curlifter.BP_rack;
+
+	document.getElementById("chkLifterCardEventsPL").checked = false;
+	document.getElementById("chkLifterCardEventsBP").checked = false;
+	document.getElementById("chkLifterCardEventsDL").checked = false;
+	document.getElementById("chkLifterCardEventsPP").checked = false;
+	var evlist = curlifter.which_lifts.split("+");
+	for(var i = 0; i < evlist.length; ++i){
+		switch(evlist[i]){
+		case "PL": document.getElementById("chkLifterCardEventsPL").checked = true; break;
+		case "BP": document.getElementById("chkLifterCardEventsBP").checked = false; break;
+		case "DL": document.getElementById("chkLifterCardEventsDL").checked = false; break;
+		case "PP": document.getElementById("chkLifterCardEventsPP").checked = false; break;
+		default: break;
+		}
+	}
+	var total = 0;
+	for(liftkey in liftlist){
+		var curlift = liftlist[liftkey];
+		var best = 0;
+		for(var iattempt = 1; iattempt <= 4; ++iattempt){
+			var lift_attempt = curlift + "_" + iattempt;
+			var lift_attempt_state = lift_attempt + "_state";
+			var text_to_use = '';
+			if(state.lifter_info[id][lift_attempt]){
+				text_to_use = state.lifter_info[id][lift_attempt];
+				if(state.lifter_info[id][lift_attempt] > best){
+					if(1 == state.lifter_info[id][lift_attempt_state]){
+						best = state.lifter_info[id][lift_attempt];
+					}
+				}
+			}
+			document.getElementById("radLifterCard" + lift_attempt + "_Good").checked = false;
+			document.getElementById("radLifterCard" + lift_attempt + "_NotAttempted").checked = false;
+			document.getElementById("radLifterCard" + lift_attempt + "_NoLift").checked = false;
+			document.getElementById("radLifterCard" + lift_attempt + "_Scratch").checked = false;
+			if(!state.lifter_info[id][lift_attempt_state]){
+				document.getElementById("radLifterCard" + lift_attempt + "_NotAttempted").checked = true;
+			}else{
+				switch(state.lifter_info[id][lift_attempt_state]){
+				case 1:
+					document.getElementById("radLifterCard" + lift_attempt + "_Good").checked = true;
+					console.log("Setting " + "radLifterCard" + lift_attempt + "_Good" + " to checked");
+					break;
+				case -1:
+					text_to_use = "-" + text_to_use;
+					document.getElementById("radLifterCard" + lift_attempt + "_NoLift").checked = true;
+					break;
+				case -2:
+					text_to_use = "--";
+					document.getElementById("radLifterCard" + lift_attempt + "_Scratch").checked = true;
+					break;
+				default:
+					document.getElementById("radLifterCard" + lift_attempt + "_NotAttempted").checked = true;
+					break;
+				}
+			}
+			document.getElementById("txtLifterCard" + lift_attempt).value = text_to_use;
+		}
+		if(best > 0){
+			document.getElementById("txtLifterCard" + curlift + "_best").value = best;
+			total += best;
+		}
+	}
+	if(total > 0){
+		document.getElementById("txtLifterCard_total").value = total;
+	}
+	return false;
+}
+
+function selLifterCard_changed(){
+	update_card_display();
+}
+function clear_lifter_card(){
+	// clear all fields
+	document.getElementById("txtLifterCardFlight").value = '';
+	document.getElementById("txtLifterCardLotNumber").value = '';
+	document.getElementById("txtLifterCardName").value = '';
+	document.getElementById("txtLifterCardWeight").value = '';
+	document.getElementById("txtLifterCardAge").value = '';
+	document.getElementById("txtLifterCardTeam").value = '';
+	document.getElementById("txtLifterCardState").value = '';
+	document.getElementById("txtLifterCardDivision").value = '';
+	document.getElementById("txtLifterCardSQ_rack").value = '';
+	document.getElementById("txtLifterCardBP_rack").value = '';
+
+	document.getElementById("chkLifterCardEventsPL").checked = false;
+	document.getElementById("chkLifterCardEventsBP").checked = false;
+	document.getElementById("chkLifterCardEventsDL").checked = false;
+	document.getElementById("chkLifterCardEventsPP").checked = false;
+	for(var iattempt = 1; iattempt <= 4; ++iattempt){
+		for(liftkey in liftlist){
+			var curlift = liftlist[liftkey];
+			var lift_attempt = curlift + "_" + iattempt;
+			document.getElementById("txtLifterCard" + curlift + "_" + iattempt).value = '';
+			document.getElementById("radLifterCard" + lift_attempt + "_Good").checked = false;
+			document.getElementById("radLifterCard" + lift_attempt + "_NotAttempted").checked = true;
+			document.getElementById("radLifterCard" + lift_attempt + "_NoLift").checked = false;
+			document.getElementById("radLifterCard" + lift_attempt + "_Scratch").checked = false;
+		}
+	}
+}
+function btnLifterCardDelete_clicked(){
+	const id = document.getElementById('selLifterCard').value;
+	if(state.lifter_info[id]){
+		if(!window.confirm("Are you sure you want to delete this lifter card?")){
+			return false;
+		}else{
+			state.lifter_info.splice(id, 1);
+			update_display();
+		}
+	}
+	clear_lifter_card();
+	return false;
+}
+function btnLifterCardSave_clicked(){
+	var id = document.getElementById('selLifterCard').value;
+	if(id < 0){
+		id = state.lifter_info.push({}) - 1;
+		for(colname in computed_columns){
+			state.lifter_info[id][colname] = computed_columns[colname];
+		}
+	}
+	// clear all fields
+	state.lifter_info[id].flight = document.getElementById("txtLifterCardFlight").value;
+	state.lifter_info[id].lot_number = document.getElementById("txtLifterCardLotNumber").value;
+	state.lifter_info[id].name = document.getElementById("txtLifterCardName").value;
+	state.lifter_info[id].weight = document.getElementById("txtLifterCardWeight").value;
+	state.lifter_info[id].age = document.getElementById("txtLifterCardAge").value;
+	state.lifter_info[id].team = document.getElementById("txtLifterCardTeam").value;
+	state.lifter_info[id].state = document.getElementById("txtLifterCardState").value;
+	state.lifter_info[id].division = document.getElementById("txtLifterCardDivision").value;
+	state.lifter_info[id].SQ_rack = document.getElementById("txtLifterCardSQ_rack").value;
+	state.lifter_info[id].BP_rack = document.getElementById("txtLifterCardBP_rack").value;
+
+	var evlist = [];
+	if(document.getElementById("chkLifterCardEventsPL").checked){ evlist.push("PL"); }
+	if(document.getElementById("chkLifterCardEventsBP").checked){ evlist.push("BP"); }
+	if(document.getElementById("chkLifterCardEventsDL").checked){ evlist.push("DL"); }
+	if(document.getElementById("chkLifterCardEventsPP").checked){ evlist.push("PP"); }
+	state.lifter_info[id].which_lifts = evlist.join("+");
+	for(var iattempt = 1; iattempt <= 4; ++iattempt){
+		for(liftkey in liftlist){
+			var curlift = liftlist[liftkey];
+			var lift_attempt = curlift + "_" + iattempt;
+			var lift_attempt_state = lift_attempt + "_state";
+			var txt = document.getElementById("txtLifterCard" + lift_attempt).value;
+
+			if(txt.match('^\-+$') || ('' == txt && document.getElementById("radLifterCard" + lift_attempt + "_Scratch").checked)){
+				state.lifter_info[id][lift_attempt] = "--";
+				state.lifter_info[id][lift_attempt_state] = -2;
+				if(2 == iattempt){
+					state.lifter_info[id][curlift + "_3"] = "--";
+					state.lifter_info[id][curlift + "_3_state"] = -2;
+					// we need to set the text and radio so that the next loop iteration doesn't trash it
+					document.getElementById("txtLifterCard" + curlift + "_3").value = '';
+					document.getElementById("radLifterCard" + curlift + "_3_Scratch").checked = true;
+				}
+			}else if('' == txt){
+				state.lifter_info[id][lift_attempt] = "";
+				state.lifter_info[id][lift_attempt_state] = 0;
+			}else{
+				var num = Number(txt);
+				if(!isNaN(num)){
+					check_attempt_weight(Math.abs(num));
+					if(num < 0 || document.getElementById("radLifterCard" + lift_attempt + "_NoLift").checked){
+						state.lifter_info[id][lift_attempt] = Math.abs(num);
+						state.lifter_info[id][lift_attempt_state] = -1;
+					}else{
+						state.lifter_info[id][lift_attempt] = num;
+						if(document.getElementById("radLifterCard" + lift_attempt + "_Good").checked){
+							state.lifter_info[id][lift_attempt_state] = 1;
+						}else{
+							state.lifter_info[id][lift_attempt_state] = 0;
+						}
+					}
+				}
+			}
+		}
+	}
+	update_display();
+	return false;
+}
+
+function radLifterCard_Good_clicked(lift, attempt){
+	var txtid = "txtLifterCard" + lift + "_" + attempt;
+	var num = Number(document.getElementById(txtid).value);
+	if(!isNaN(num)){
+		document.getElementById(txtid).value = Math.abs(num);
+	}else{
+		document.getElementById(txtid).value = '';
+	}
+}
+function radLifterCard_NotAttempted_clicked(lift, attempt){
+	var txtid = "txtLifterCard" + lift + "_" + attempt;
+	var num = Number(document.getElementById(txtid).value);
+	if(!isNaN(num)){
+		document.getElementById(txtid).value = Math.abs(num);
+	}else{
+		document.getElementById(txtid).value = '';
+	}
+}
+function radLifterCard_NoLift_clicked(lift, attempt){
+	var txtid = "txtLifterCard" + lift + "_" + attempt;
+	var num = Number(document.getElementById(txtid).value);
+	if(!isNaN(num)){
+		document.getElementById(txtid).value = -Math.abs(num);
+	}else{
+		document.getElementById(txtid).value = '';
+	}
+}
+function radLifterCard_Scratch_clicked(lift, attempt){
+	var txtid = "txtLifterCard" + lift + "_" + attempt;
+	document.getElementById(txtid).value = '--';
+}
+
+
+
+
+
+
+
+
+/* Blob.js
+ * A Blob implementation.
+ * 2014-07-24
+ *
+ * By Eli Grey, http://eligrey.com
+ * By Devin Samarin, https://github.com/dsamarin
+ * License: MIT
+ *   See https://github.com/eligrey/Blob.js/blob/master/LICENSE.md
+ */
+
+/*global self, unescape */
+/*jslint bitwise: true, regexp: true, confusion: true, es5: true, vars: true, white: true,
+  plusplus: true */
+
+/*! @source http://purl.eligrey.com/github/Blob.js/blob/master/Blob.js */
+
+(function (view) {
+	"use strict";
+
+	view.URL = view.URL || view.webkitURL;
+
+	if (view.Blob && view.URL) {
+		try {
+			new Blob;
+			return;
+		} catch (e) {}
+	}
+
+	// Internally we use a BlobBuilder implementation to base Blob off of
+	// in order to support older browsers that only have BlobBuilder
+	var BlobBuilder = view.BlobBuilder || view.WebKitBlobBuilder || view.MozBlobBuilder || (function(view) {
+		var
+			  get_class = function(object) {
+				return Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
+			}
+			, FakeBlobBuilder = function BlobBuilder() {
+				this.data = [];
+			}
+			, FakeBlob = function Blob(data, type, encoding) {
+				this.data = data;
+				this.size = data.length;
+				this.type = type;
+				this.encoding = encoding;
+			}
+			, FBB_proto = FakeBlobBuilder.prototype
+			, FB_proto = FakeBlob.prototype
+			, FileReaderSync = view.FileReaderSync
+			, FileException = function(type) {
+				this.code = this[this.name = type];
+			}
+			, file_ex_codes = (
+				  "NOT_FOUND_ERR SECURITY_ERR ABORT_ERR NOT_READABLE_ERR ENCODING_ERR "
+				+ "NO_MODIFICATION_ALLOWED_ERR INVALID_STATE_ERR SYNTAX_ERR"
+			).split(" ")
+			, file_ex_code = file_ex_codes.length
+			, real_URL = view.URL || view.webkitURL || view
+			, real_create_object_URL = real_URL.createObjectURL
+			, real_revoke_object_URL = real_URL.revokeObjectURL
+			, URL = real_URL
+			, btoa = view.btoa
+			, atob = view.atob
+
+			, ArrayBuffer = view.ArrayBuffer
+			, Uint8Array = view.Uint8Array
+
+			, origin = /^[\w-]+:\/*\[?[\w\.:-]+\]?(?::[0-9]+)?/
+		;
+		FakeBlob.fake = FB_proto.fake = true;
+		while (file_ex_code--) {
+			FileException.prototype[file_ex_codes[file_ex_code]] = file_ex_code + 1;
+		}
+		// Polyfill URL
+		if (!real_URL.createObjectURL) {
+			URL = view.URL = function(uri) {
+				var
+					  uri_info = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+					, uri_origin
+				;
+				uri_info.href = uri;
+				if (!("origin" in uri_info)) {
+					if (uri_info.protocol.toLowerCase() === "data:") {
+						uri_info.origin = null;
+					} else {
+						uri_origin = uri.match(origin);
+						uri_info.origin = uri_origin && uri_origin[1];
+					}
+				}
+				return uri_info;
+			};
+		}
+		URL.createObjectURL = function(blob) {
+			var
+				  type = blob.type
+				, data_URI_header
+			;
+			if (type === null) {
+				type = "application/octet-stream";
+			}
+			if (blob instanceof FakeBlob) {
+				data_URI_header = "data:" + type;
+				if (blob.encoding === "base64") {
+					return data_URI_header + ";base64," + blob.data;
+				} else if (blob.encoding === "URI") {
+					return data_URI_header + "," + decodeURIComponent(blob.data);
+				} if (btoa) {
+					return data_URI_header + ";base64," + btoa(blob.data);
+				} else {
+					return data_URI_header + "," + encodeURIComponent(blob.data);
+				}
+			} else if (real_create_object_URL) {
+				return real_create_object_URL.call(real_URL, blob);
+			}
+		};
+		URL.revokeObjectURL = function(object_URL) {
+			if (object_URL.substring(0, 5) !== "data:" && real_revoke_object_URL) {
+				real_revoke_object_URL.call(real_URL, object_URL);
+			}
+		};
+		FBB_proto.append = function(data/*, endings*/) {
+			var bb = this.data;
+			// decode data to a binary string
+			if (Uint8Array && (data instanceof ArrayBuffer || data instanceof Uint8Array)) {
+				var
+					  str = ""
+					, buf = new Uint8Array(data)
+					, i = 0
+					, buf_len = buf.length
+				;
+				for (; i < buf_len; i++) {
+					str += String.fromCharCode(buf[i]);
+				}
+				bb.push(str);
+			} else if (get_class(data) === "Blob" || get_class(data) === "File") {
+				if (FileReaderSync) {
+					var fr = new FileReaderSync;
+					bb.push(fr.readAsBinaryString(data));
+				} else {
+					// async FileReader won't work as BlobBuilder is sync
+					throw new FileException("NOT_READABLE_ERR");
+				}
+			} else if (data instanceof FakeBlob) {
+				if (data.encoding === "base64" && atob) {
+					bb.push(atob(data.data));
+				} else if (data.encoding === "URI") {
+					bb.push(decodeURIComponent(data.data));
+				} else if (data.encoding === "raw") {
+					bb.push(data.data);
+				}
+			} else {
+				if (typeof data !== "string") {
+					data += ""; // convert unsupported types to strings
+				}
+				// decode UTF-16 to binary string
+				bb.push(unescape(encodeURIComponent(data)));
+			}
+		};
+		FBB_proto.getBlob = function(type) {
+			if (!arguments.length) {
+				type = null;
+			}
+			return new FakeBlob(this.data.join(""), type, "raw");
+		};
+		FBB_proto.toString = function() {
+			return "[object BlobBuilder]";
+		};
+		FB_proto.slice = function(start, end, type) {
+			var args = arguments.length;
+			if (args < 3) {
+				type = null;
+			}
+			return new FakeBlob(
+				  this.data.slice(start, args > 1 ? end : this.data.length)
+				, type
+				, this.encoding
+			);
+		};
+		FB_proto.toString = function() {
+			return "[object Blob]";
+		};
+		FB_proto.close = function() {
+			this.size = 0;
+			delete this.data;
+		};
+		return FakeBlobBuilder;
+	}(view));
+
+	view.Blob = function(blobParts, options) {
+		var type = options ? (options.type || "") : "";
+		var builder = new BlobBuilder();
+		if (blobParts) {
+			for (var i = 0, len = blobParts.length; i < len; i++) {
+				if (Uint8Array && blobParts[i] instanceof Uint8Array) {
+					builder.append(blobParts[i].buffer);
+				}
+				else {
+					builder.append(blobParts[i]);
+				}
+			}
+		}
+		var blob = builder.getBlob(type);
+		if (!blob.slice && blob.webkitSlice) {
+			blob.slice = blob.webkitSlice;
+		}
+		return blob;
+	};
+
+	var getPrototypeOf = Object.getPrototypeOf || function(object) {
+		return object.__proto__;
+	};
+	view.Blob.prototype = getPrototypeOf(new view.Blob());
+}(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this.content || this));
+
+
+
+
+/*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
+var saveAs=saveAs||function(e){"use strict";if(typeof e==="undefined"||typeof navigator!=="undefined"&&/MSIE [1-9]\./.test(navigator.userAgent)){return}var t=e.document,n=function(){return e.URL||e.webkitURL||e},r=t.createElementNS("http://www.w3.org/1999/xhtml","a"),o="download"in r,i=function(e){var t=new MouseEvent("click");e.dispatchEvent(t)},a=/constructor/i.test(e.HTMLElement),f=/CriOS\/[\d]+/.test(navigator.userAgent),u=function(t){(e.setImmediate||e.setTimeout)(function(){throw t},0)},d="application/octet-stream",s=1e3*40,c=function(e){var t=function(){if(typeof e==="string"){n().revokeObjectURL(e)}else{e.remove()}};setTimeout(t,s)},l=function(e,t,n){t=[].concat(t);var r=t.length;while(r--){var o=e["on"+t[r]];if(typeof o==="function"){try{o.call(e,n||e)}catch(i){u(i)}}}},p=function(e){if(/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type)){return new Blob([String.fromCharCode(65279),e],{type:e.type})}return e},v=function(t,u,s){if(!s){t=p(t)}var v=this,w=t.type,m=w===d,y,h=function(){l(v,"writestart progress write writeend".split(" "))},S=function(){if((f||m&&a)&&e.FileReader){var r=new FileReader;r.onloadend=function(){var t=f?r.result:r.result.replace(/^data:[^;]*;/,"data:attachment/file;");var n=e.open(t,"_blank");if(!n)e.location.href=t;t=undefined;v.readyState=v.DONE;h()};r.readAsDataURL(t);v.readyState=v.INIT;return}if(!y){y=n().createObjectURL(t)}if(m){e.location.href=y}else{var o=e.open(y,"_blank");if(!o){e.location.href=y}}v.readyState=v.DONE;h();c(y)};v.readyState=v.INIT;if(o){y=n().createObjectURL(t);setTimeout(function(){r.href=y;r.download=u;i(r);h();c(y);v.readyState=v.DONE});return}S()},w=v.prototype,m=function(e,t,n){return new v(e,t||e.name||"download",n)};if(typeof navigator!=="undefined"&&navigator.msSaveOrOpenBlob){return function(e,t,n){t=t||e.name||"download";if(!n){e=p(e)}return navigator.msSaveOrOpenBlob(e,t)}}w.abort=function(){};w.readyState=w.INIT=0;w.WRITING=1;w.DONE=2;w.error=w.onwritestart=w.onprogress=w.onwrite=w.onabort=w.onerror=w.onwriteend=null;return m}(typeof self!=="undefined"&&self||typeof window!=="undefined"&&window||this.content);if(typeof module!=="undefined"&&module.exports){module.exports.saveAs=saveAs}else if(typeof define!=="undefined"&&define!==null&&define.amd!==null){define([],function(){return saveAs})}
+
+function btnLoadState_clicked(){
+	var fileToLoad = document.getElementById("fileLoadState").files[0];
+
+	var fileReader = new FileReader();
+	fileReader.onload = function(fileLoadedEvent){
+		var textFromFileLoaded = fileLoadedEvent.target.result;
+		state = JSON.parse(textFromFileLoaded);
+		add_computed_columns();
+		update_display();
+	};
+	fileReader.readAsText(fileToLoad, "UTF-8");
+}
+function btnSaveState_clicked(){
+	var blob = new Blob([JSON.stringify(state)], {type: "text/plain;charset=utf-8"});
+	saveAs(blob, "netlifter_" + get_timestamp() + ".json");
+}
+
+// Autosave feature:
+//   Every five minutes, this will autosave to a cookie.
+//   You can delete the last autosave.
+//   When reloading, the last autosave is loaded.
+//   Autosaves last for 2 days.
+
+function autosave(){
+	if(typeof(Storage) === "undefined"){ return; }
+	localStorage.setItem("state", JSON.stringify(state));
+}
+function autoload(){
+	if(typeof(Storage) === "undefined"){ return; }
+	var statestr = localStorage.getItem("state");
+	if(statestr){
+		state = JSON.parse(statestr);
+	}
+	add_computed_columns();
+}
+function btnAutosave_clicked(){
+	autosave();
+}
+function btnLoadAutosave_clicked(){
+	autoload();
+	update_display();
+}
+function btnClearAutosave_clicked(){
+	localStorage.removeItem("state");
+}
+
+
+//// Timer
+
+var timer_sec = 60;
+var timer_interval;
+function update_timer_display(){
+	var min = Math.floor(timer_sec / 60);
+	var sec = timer_sec - min*60;
+	if(sec < 10){ sec = '0' + sec; }
+	document.getElementById('timer').innerHTML = min+":"+sec;
+}
+function parse_timer(){
+	timer_sec = 0;
+	if(document.getElementById('txtTimerMin').value){
+		timer_sec += 60*parseInt(document.getElementById('txtTimerMin').value);
+	}
+	if(document.getElementById('txtTimerSec').value){
+		timer_sec += parseInt(document.getElementById('txtTimerSec').value);
+	}
+}
+function btnTimerReset_clicked(){
+	if(timer_interval){
+		clearInterval(timer_interval);
+		timer_interval = null;
+		document.getElementById('btnTimerStartStop').value = 'Start';
+	}
+	parse_timer();
+	update_timer_display();
+}
+
+function btnTimerStartStop_clicked(){
+	if(!timer_interval){
+		update_timer_display();
+		if(timer_sec <= 0){ return; }
+		timer_interval = setInterval(function(){
+			timer_sec--;
+			update_timer_display();
+			if(timer_sec <= 0){
+				clearInterval(timer_interval);
+		timer_interval = null;
+				document.getElementById('timer').innerHTML = "<blink>0:00</blink>";
+				document.getElementById('btnTimerStartStop').value = 'Start';
+			}
+		}, 1000);
+		document.getElementById('btnTimerStartStop').value = 'Stop';
+	}else{
+		clearInterval(timer_interval);
+		timer_interval = null;
+		document.getElementById('btnTimerStartStop').value = 'Start';
+	}
+}
+
+//// Import
+function import_download_template(){
+	var csv = '';
+	for(colidx in import_columns){
+		csv += get_column_header(import_columns[colidx]) + ',';
+	}
+	var blob = new Blob([csv], {type: "text/csv;charset=utf-8"});
+	saveAs(blob, "netlifter_import_template.csv");
+}
+function import_upload_lifters(){
+	var fileToLoad = document.getElementById("fileImportLifters").files[0];
+
+	var fileReader = new FileReader();
+	fileReader.onload = function(fileLoadedEvent){
+		var textFromFileLoaded = fileLoadedEvent.target.result;
+		import_parse_csv(textFromFileLoaded);
+		add_computed_columns();
+		update_display();
+	};
+	fileReader.readAsText(fileToLoad, "UTF-8");
+}
+
+//// Export
+
+function export_download(){
+	var csv = '';
+	for(colidx in export_columns){
+		csv += get_column_header(export_columns[colidx]) + ',';
+	}
+	const m = state.lifter_info.length;
+	for(var i = 0; i < m; ++i){
+		for(colidx in export_columns){
+			const colname = export_columns[colidx];
+			if("function" === typeof state.lifter_info[i][colname]){
+				state.lifter_info[i][colname](state.lifter_info[id]);
+			}else{
+				csv += (state.lifter_info[i][colname] + ',');
+			}
+		}
+		csv += "\n";
+	}
+	var blob = new Blob([csv], {type: "text/csv;charset=utf-8"});
+	saveAs(blob, "netlifter_export_" + get_timestamp() + ".csv");
+}
+
+
+
+
+
+
+
+
+
+
+window.onload = function(){
+	autoload();
+	update_display();
+}
+</script>
+</body>
+</html>
