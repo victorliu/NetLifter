@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Net Lifter</title>
+<!-- include style.css -->
+<style>
+<!-- include editablegrid.css -->
+</style>
+<script>
+// include editablegrid.min.js
+// include editablegrid_renderers.js
+// include editablegrid_editors.min.js
+// include editablegrid_validators.js
+// include editablegrid_utils.min.js
+</script>
+
+</head>
+
+<body>
+
+<div id="bgbox"></div>
+
+<ul class="tabbar">
+	<li><a href="#" class="tablinks active" onclick="switch_tab(event, 'tabInstructions')">Instructions</a></li>
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabSetup');tabSetup_update_display()">Setup</a></li>
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabWeighIn');tabWeighIn_update_display()">Weigh-in</a></li>
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabLifting');tabLifting_update_display()">Lifting</a></li>
+	<li><a href="#" class="tablinks" onclick="switch_tab(event, 'tabSaveRestore');tabSaveRestore_update_display()">Save/Restore</a></li>
+</ul>
+
+<div id="tabInstructions" class="tabcontent">
+<!-- include tab_instructions.html -->
+</div>
+
+<div id="tabLifting" class="tabcontent">
+<!-- include tab_lifting.html -->
+</div>
+
+<div id="tabWeighIn" class="tabcontent">
+<!-- include tab_weighin.html -->
+</div>
+
+<div id="tabSetup" class="tabcontent">
+<!-- include tab_setup.html -->
+</div>
+
+<div id="tabSaveRestore" class="tabcontent">
+<!-- include tab_saverestore.html -->
+</div>
+
+<div>
+<p>&nbsp;</p>
+</div>
+
+<script>
+// include tab_switching.js
+// include util.js
+// include blob.js
+// include saveas.js
+
+// include init.js
+
+// include setup.js
+// include weighin.js
+// include lifting.js
+// include timer.js
+// include saverestore.js
+
+window.onload = function(){
+	autoload();
+	switch_tab(null, 'tabInstructions');
+}
+</script>
+</body>
+</html>

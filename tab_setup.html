@@ -1,0 +1,95 @@
+<table><tr><td valign="top" width="40%">
+
+<h1>Platform weight set</h1>
+<p>
+Bar and collar should be first two items, then all the weights in decreasing order.
+</p>
+
+<div id="tabSetup_tabPlatformWeightSet">
+</div>
+
+<select id="tabSetup_selPredefinedWeightSets">
+<option value="KG" selected="selected">Kilogram plates</option>
+<option value="LB">Pound plates</option>
+</select>
+<input type="button" name="Use standard plates" value="Use standard plates" onclick="tabSetup_use_standard_plates_onclick()">
+
+<p>
+The bar weight specified above is the "default" bar weight.
+Some flights or lifts may use a different weight of bar, and you may specify exceptions on the right.
+</p>
+
+</td><td valign="top" width="30%">
+
+<h1>Bar weight</h1>
+<div id="tabSetup_tabBarWeight">
+</div>
+
+</td><td valign="top" width="30%">
+
+<h1>Units</h1>
+
+<table>
+<tr><th></th><th>KG</th><th>LB</th></tr>
+<tr>
+	<th>Platform Weight</th>
+	<td><input type="radio" name="PlatformWeightUnit" value="KG" id="radPlatformWeightUnitKG" onchange="tabSetup_radPlatformWeightUnitChanged()"></td>
+	<td><input type="radio" name="PlatformWeightUnit" value="LB" id="radPlatformWeightUnitLB" onchange="tabSetup_radPlatformWeightUnitChanged()"></td>
+</tr>
+<tr>
+	<th>Body Weight</th>
+	<td><input type="radio" name="BodyWeightUnit" value="KG" id="radBodyWeightUnitKG" onchange="tabSetup_radBodyWeightUnitChanged()"></td>
+	<td><input type="radio" name="BodyWeightUnit" value="LB" id="radBodyWeightUnitLB" onchange="tabSetup_radBodyWeightUnitChanged()"></td>
+</tr>
+<tr>
+	<th>Weight Classes</th>
+	<td><input type="radio" name="WeightClassUnit" value="KG" id="radWeightClassUnitKG" onchange="tabSetup_radWeightClassUnitChanged()"></td>
+	<td><input type="radio" name="WeightClassUnit" value="LB" id="radWeightClassUnitLB" onchange="tabSetup_radWeightClassUnitChanged()"></td>
+</tr>
+</table>
+
+</td></tr>
+<tr><td valign="top">
+
+<h1>Divisions</h1>
+<div id="tabSetup_tabDivisions"></div>
+
+<select id="tabSetup_selPredefinedDivisions">
+</select>
+<input type="button" name="Import" value="Import" onclick="tabSetup_import_divisions()">
+
+
+</td><td valign="top">
+
+
+<h1>Weight classes</h1>
+
+<table>
+<tr>
+	<td valign="top"><div id="tabSetup_tabWeightClassesMen"></div></td>
+	<td valign="top"><div id="tabSetup_tabWeightClassesWomen"></div></td>
+</tr>
+</table>
+
+<select id="tabSetup_selPredefinedWeightClasses">
+</select>
+<input type="button" name="Import" value="Import" onclick="tabSetup_import_weight_classes()">
+
+</td></tr></table>
+
+<!--
+<h1>Displayed columns</h1>
+<textarea id="txtDisplayedColumns" rows="10" cols="10">
+flight
+name
+division
+weight
+age
+SQ_rack
+wilks
+attempts
+best
+subtotal
+</textarea>
+-->
+

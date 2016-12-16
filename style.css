@@ -1,0 +1,209 @@
+<style>
+
+body{
+	font-family: Verdana, Geneva, sans-serif;
+}
+h1{ font-size: 150% }
+h2{ font-size: 130% }
+h3{ font-size: 120% }
+td{ vertical-align: top; }
+
+table tr th{
+	padding: 0 0.5em;
+}
+
+/* Style the list */
+ul.tabbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    position: fixed;
+    bottom: 0;
+	right: 0;
+}
+
+/* Float the list items side by side */
+ul.tabbar li {float: left;}
+
+/* Style the links inside the list items */
+ul.tabbar li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tabbar li a:hover {background-color: #ddd;}
+
+/* Create an active/current tablink class */
+ul.tabbar li a:focus, .active {background-color: #ccc;}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+
+.table_divider{
+	background-color: #ccc;
+}
+
+
+
+
+
+
+.weightKG:after{
+	content: " kg";
+}
+.weightLB:after{
+	content: " lb";
+}
+#bgbox{
+	position:absolute;
+	width: 1024px;
+	height: 768px;
+	background-color: #eee;
+	z-index: -1;
+}
+textarea{
+	font: 10pt Courier, Courier New, sans-serif;
+}
+.curLifterInfo{
+	background-color: #ccc;
+	border: 1px solid #999;
+	font-size: 24px;
+}
+#curLifterName{
+	font-weight: bold;
+}
+#curLifterAge:before{
+	content: "Age ";
+}
+#curLifterBodyWeight:before{
+	content: "BodyWt: ";
+}
+#curLifterWeightClass:before{
+	content: "WtCls: ";
+}
+#curLifterDivision:before{
+	content: "Div: ";
+}
+
+#curLiftInfo{
+	background-color: #ccc;
+	border: 1px solid #999;
+	font-size: 200%;
+}
+#curLift{
+}
+#curWeightOtherUnit:before{
+	content: "(";
+	color: #666;
+}
+#curWeightOtherUnit{
+	color: #666;
+}
+#curWeightOtherUnit:after{
+	content: ")";
+	color: #666;
+}
+#curRackHeight:before{
+	content: "Rack height: ";
+}
+blink {
+  -webkit-animation: blink 1s steps(5, start) infinite;
+  -moz-animation:    blink 1s steps(5, start) infinite;
+  -o-animation:      blink 1s steps(5, start) infinite;
+  animation:         blink 1s steps(5, start) infinite;
+}
+
+@-webkit-keyframes blink {
+  to { visibility: hidden; }
+}
+@-moz-keyframes blink {
+  to { visibility: hidden; }
+}
+@-o-keyframes blink {
+  to { visibility: hidden; }
+}
+@keyframes blink {
+  to { visibility: hidden; }
+}
+.entry_section{
+	margin: 0.5em;
+	padding: 0.5em;
+	border: 1px solid #ccc;
+}
+
+table{
+	border-collapse: collapse;
+}
+td{
+	padding: 0.1em 0.2em 0.1em 0.2em;
+	border: 1px solid #ccc;
+}
+tr.current{
+	background-color: #ccccff;
+}
+td.current{
+	font-weight: bold;
+}
+td.good{
+	color: #009900;
+}
+td.nolift{
+	color: #990000;
+	text-decoration: line-through;
+}
+
+#dlgEntry{
+	background-color: #ffff99;
+	border: 1px solid black;
+	padding: 0.5em;
+	position:absolute;
+	display:none;
+}
+#dlgEntryAttempt{
+	background-color: #ffff99;
+	border: 1px solid black;
+	padding: 0.5em;
+	position:absolute;
+	display:none;
+}
+#dlgEntryRowIndicator{
+	background-color: #ffff99;
+	position:absolute;
+	display:none;
+	width: 1em;
+}
+#tbdCurLifterInfo td{
+	border: 1px solid black;
+}
+#timerbox #timer{
+	float: right;
+	font-size: 45px;
+}
+
+
+
+
+
+#secTableDisplay{
+	height: 400px;
+	width: 1024px;
+	overflow: auto;
+	position: relative;
+}
+
+</style>

@@ -1,0 +1,29 @@
+<h1>NetLifter instructions</h1>
+
+<ol>
+<li>Prior to the meet, go to the Setup tab and configure everything according to the type of meet. In particular, make sure the platform weight set contains the right number of plates, and that the bar weigth for each flight and lift is accurate. The quantities of plates can be changed later on-the-fly, so for example, the quantity of 50 kg plates can be set to 0 initially.</li>
+<li>Prior to weigh-in, go to the Weigh-in tab and download the import template. It is easiest to enter all lifter information through Excel into the spreadsheet.</li>
+<li>After weigh-ins are completed, upload the spreadsheet on the Weigh-in tab and click the &quot;Import lifters&quot; button. This will remove any existing lifter data and replace it with the weigh-in data. It is best to keep a copy of the original spreadsheet as a backup.</li>
+<li>Once lifting begins, use the Lifting tab for entering data in the same way as in NextLifter. The fields in the table are editable so any typos may be corrected easily at the scoring table.</li>
+<li>During lifting, use the Save/Restore tab to periodically save a backup of the program data. These files are timestamped (YYYYMMDD-HHMM) and may be uploaded to restore the program state.</li>
+<li>At the end of the meet, use the Save/Restore tab to download a final results spreadsheet.</li>
+</ol>
+
+<h1>Motivation</h1>
+<p>
+NetLifter is intended as a replacement for the famous NextLifter Excel spreadsheet for running powerlifting meets.
+NextLifter can be quite fragile, and it is easy to introduce data inconsistencies if weigh-in data is not accurately entered.
+NetLifter aims to solve these problems by maintaining a single global program state that can be edited at any time (it does not enforce that all data is finalized for the lifting phase).
+This design approach allows NetLifter to easily create regular backup snapshots in case something goes wrong.
+</p>
+
+<pre>
+todo:
+Add hover dialog for divisions on weigh-in [LIST]
+Add/Remove row for weight classes, divisions
+Validate divisions on weigh-in and lifting pages.
+Separate window for warmpup listing, or for broadcast overlay.
+Extra export formats
+Move character set selection to Setup tab.
+</pre>
+

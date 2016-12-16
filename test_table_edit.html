@@ -1,0 +1,29 @@
+<html>
+<head>
+</head>
+<body>
+
+<table id="thetable">
+</table>
+
+<script src="table_edit.js"></script>
+<script>
+
+const headings = [ 'col 1', 'col 2', 'col 3' ];
+var data = [
+	[1,2,3],
+	[4,5,6],
+	[7,8,9]
+];
+function callback(i, j, value){
+	console.log("in callback for row " + i + ", col " + j + ", val " + value);
+	return value;
+}
+
+window.onload = function(){
+	editable_table_build('thetable', headings, data, callback);
+}
+
+</script>
+</body>
+</html>

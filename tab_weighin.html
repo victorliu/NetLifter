@@ -1,0 +1,218 @@
+<h1>Lifter cards</h1>
+
+<table><tr><td valign="top">
+
+<select size="40" id="selLifterCard" onchange="selLifterCard_changed()">
+<option value="-99">Add new lifter</option>
+</select>
+
+</td><td valign="top">
+
+<table>
+<tr><td><!-- row 1 -->
+	<table><tr>
+		<td>Platform</td><td>&nbsp;</td>
+		<td>Flight</td><td><input type="text" name="value" id="txtLifterCardFlight"></td>
+		<td>Lot Number</td><td><input type="text" name="value" id="txtLifterCardLotNumber"></td>
+		<td>Meet Date</td><td>&nbsp;</td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 2 -->
+	<table><tr>
+		<th>SCORE CARD</th>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 3 -->
+	<table><tr>
+		<td>Name</td><td><input type="text" name="value" id="txtLifterCardName"></td>
+		<td>Body Weight</td><td><input type="text" name="value" size="6" id="txtLifterCardWeight"><span id="tabWeighIn_body_weight_holder">&nbsp;</span></td>
+		<td>Weight Class</td><td><input type="text" name="value" size="6" id="txtLifterCardWeightClass" readonly="readonly"><span id="tabWeighIn_weight_class_holder">&nbsp;</span></td></td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 4 -->
+	<table><tr>
+		<td>Team</td><td><input type="text" name="value" id="txtLifterCardTeam"></td>
+		<td>State</td><td><input type="text" name="value" size="3" id="txtLifterCardState"></td>
+		<td>Age</td><td><input type="text" name="value" size="4" id="txtLifterCardAge"></td>
+		<td>Date of Birth</td><td><input type="text" name="value" size="11" id="txtLifterCardDOB"></td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 5 -->
+	<table><tr>
+		<td>Division(s)</td><td><input type="text" name="value" id="txtLifterCardDivision"> (separate with commas if multiple)
+		<input type="button" name="Show List" value="Show List" onclick="btnLifterCardDivisionHelper_clicked()">
+		</td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 6 -->
+	<table><tr>
+		<td>Events</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsPL" value="PL"> PL (Powerlifting)</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsBP" value="BP"> BP (Bench press)</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsDL" value="DL"> DL (Deadlift)</td>
+		<td><input type="checkbox" name="events" id="chkLifterCardEventsPP" value="PP"> PP (Push-pull)</td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 7 -->
+	<table><tr>
+		<td>Squat Bar Height</td><td><input type="text" name="value" id="txtLifterCardSQ_rack"></td>
+		<td>Bench Height</td><td><input type="text" name="value" id="txtLifterCardBP_rack"></td>
+	</tr></table>
+</td></tr>
+<tr><td><!-- row 8 -->
+	<table>
+		<tr>
+			<th>Attempt:</th>
+			<th>1ST</th>
+			<th>2ND</th>
+			<th>3RD</th>
+			<th>BEST</th>
+			<td>4TH (Does not count towards total)</td>
+		</tr>
+		<tr>
+			<th>Squat</th>
+			<td><input type="text" name="value" id="txtLifterCardSQ_1"><br>
+			<input type="radio" name="LifterCardSQ_1_Status" value="1" id="radLifterCardSQ_1_Good" onclick="radLifterCard_Good_clicked('SQ',1)"> Good
+			<input type="radio" name="LifterCardSQ_1_Status" value="0" id="radLifterCardSQ_1_NotAttempted" onclick="radLifterCard_NotAttempted_clicked('SQ',1)"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_1_Status" value="-1" id="radLifterCardSQ_1_NoLift" onclick="radLifterCard_NoLift_clicked('SQ',1)"> No lift
+			<input type="radio" name="LifterCardSQ_1_Status" value="-2" id="radLifterCardSQ_1_Scratch" onclick="radLifterCard_Scratch_clicked('SQ',1)"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_2"><br>
+			<input type="radio" name="LifterCardSQ_2_Status" value="1" id="radLifterCardSQ_2_Good"> Good
+			<input type="radio" name="LifterCardSQ_2_Status" value="0" id="radLifterCardSQ_2_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_2_Status" value="-1" id="radLifterCardSQ_2_NoLift"> No lift
+			<input type="radio" name="LifterCardSQ_2_Status" value="-2" id="radLifterCardSQ_2_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_3"><br>
+			<input type="radio" name="LifterCardSQ_3_Status" value="1" id="radLifterCardSQ_3_Good"> Good
+			<input type="radio" name="LifterCardSQ_3_Status" value="0" id="radLifterCardSQ_3_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_3_Status" value="-1" id="radLifterCardSQ_3_NoLift"> No lift
+			<input type="radio" name="LifterCardSQ_3_Status" value="-2" id="radLifterCardSQ_3_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_best" readonly="readonly"></td>
+			<td><input type="text" name="value" id="txtLifterCardSQ_4"><br>
+			<input type="radio" name="LifterCardSQ_4_Status" value="1" id="radLifterCardSQ_4_Good"> Good
+			<input type="radio" name="LifterCardSQ_4_Status" value="0" id="radLifterCardSQ_4_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardSQ_4_Status" value="-1" id="radLifterCardSQ_4_NoLift"> No lift
+			<input type="radio" name="LifterCardSQ_4_Status" value="-2" id="radLifterCardSQ_4_Scratch"> Scratch<br>
+			</td>
+		</tr>
+		<tr>
+			<th>Bench</th>
+			<td><input type="text" name="value" id="txtLifterCardBP_1"><br>
+			<input type="radio" name="LifterCardBP_1_Status" value="1" id="radLifterCardBP_1_Good"> Good
+			<input type="radio" name="LifterCardBP_1_Status" value="0" id="radLifterCardBP_1_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_1_Status" value="-1" id="radLifterCardBP_1_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_1_Status" value="-2" id="radLifterCardBP_1_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardBP_2"><br>
+			<input type="radio" name="LifterCardBP_2_Status" value="1" id="radLifterCardBP_2_Good"> Good
+			<input type="radio" name="LifterCardBP_2_Status" value="0" id="radLifterCardBP_2_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_2_Status" value="-1" id="radLifterCardBP_2_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_2_Status" value="-2" id="radLifterCardBP_2_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardBP_3"><br>
+			<input type="radio" name="LifterCardBP_3_Status" value="1" id="radLifterCardBP_3_Good"> Good
+			<input type="radio" name="LifterCardBP_3_Status" value="0" id="radLifterCardBP_3_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_3_Status" value="-1" id="radLifterCardBP_3_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_3_Status" value="-2" id="radLifterCardBP_3_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardBP_best" readonly="readonly"></td>
+			<td><input type="text" name="value" id="txtLifterCardBP_4"><br>
+			<input type="radio" name="LifterCardBP_4_Status" value="1" id="radLifterCardBP_4_Good"> Good
+			<input type="radio" name="LifterCardBP_4_Status" value="0" id="radLifterCardBP_4_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardBP_4_Status" value="-1" id="radLifterCardBP_4_NoLift"> No lift
+			<input type="radio" name="LifterCardBP_4_Status" value="-2" id="radLifterCardBP_4_Scratch"> Scratch<br>
+			</td>
+		</tr>
+		<tr>
+			<th>Deadlift</th>
+			<td><input type="text" name="value" id="txtLifterCardDL_1"><br>
+			<input type="radio" name="LifterCardDL_1_Status" value="1" id="radLifterCardDL_1_Good"> Good
+			<input type="radio" name="LifterCardDL_1_Status" value="0" id="radLifterCardDL_1_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_1_Status" value="-1" id="radLifterCardDL_1_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_1_Status" value="-2" id="radLifterCardDL_1_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardDL_2"><br>
+			<input type="radio" name="LifterCardDL_2_Status" value="1" id="radLifterCardDL_2_Good"> Good
+			<input type="radio" name="LifterCardDL_2_Status" value="0" id="radLifterCardDL_2_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_2_Status" value="-1" id="radLifterCardDL_2_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_2_Status" value="-2" id="radLifterCardDL_2_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardDL_3"><br>
+			<input type="radio" name="LifterCardDL_3_Status" value="1" id="radLifterCardDL_3_Good"> Good
+			<input type="radio" name="LifterCardDL_3_Status" value="0" id="radLifterCardDL_3_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_3_Status" value="-1" id="radLifterCardDL_3_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_3_Status" value="-2" id="radLifterCardDL_3_Scratch"> Scratch<br>
+			</td>
+			<td><input type="text" name="value" id="txtLifterCardDL_best" readonly="readonly"></td>
+			<td><input type="text" name="value" id="txtLifterCardDL_4"><br>
+			<input type="radio" name="LifterCardDL_4_Status" value="1" id="radLifterCardDL_4_Good"> Good
+			<input type="radio" name="LifterCardDL_4_Status" value="0" id="radLifterCardDL_4_NotAttempted"> Not attempted<br>
+			<input type="radio" name="LifterCardDL_4_Status" value="-1" id="radLifterCardDL_4_NoLift"> No lift
+			<input type="radio" name="LifterCardDL_4_Status" value="-2" id="radLifterCardDL_4_Scratch"> Scratch<br>
+			</td>
+		</tr>
+		<tr>
+			<th>Total</th>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td><input type="text" name="value" id="txtLifterCard_total" readonly="readonly"></td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+</td></tr>
+</table>
+
+<input type="button" name="Save lifter" value="Save" onclick="btnLifterCardSave_clicked()">
+<input type="button" name="Delete lifter" value="Delete lifter" onclick="btnLifterCardDelete_clicked()">
+
+</td></tr>
+</table>
+
+<h2>CSV import</h2>
+<p>
+First, download the template below:<br>
+<input type="button" name="Download import template CSV" value="Download import template" onclick="import_download_template()">
+<br>
+Next, fill out the template (e.g. in Excel), and then import it here:<br>
+<input type="file" id="fileImportLifters" accept="*.csv">
+<input type="button" name="Import from CSV" value="Import lifters" onclick="import_upload_lifters()">
+</p>
+<p>
+In order to handle non-English characters, you may need to adjust the character set according to your locale:
+<br>
+Character set:
+<select id="selWeighIn_ImportCharset">
+<option value="windows-1252" selected="selected">Excel default (Windows codepage 1252)</option>
+<option value="us-ascii">US-ASCII</option>
+<option value="iso-8859-1">ISO/IEC 8859-1 (Latin 1 Western Europe)</option>
+<option value="iso-8859-2">ISO/IEC 8859-2 (Latin 2 Central Europe)</option>
+<option value="iso-8859-3">ISO/IEC 8859-3 (Latin 3 South European)</option>
+<option value="iso-8859-4">ISO/IEC 8859-4 (Latin 4 North European)</option>
+<option value="iso-8859-5">ISO/IEC 8859-5 (Latin/Cyrillic)</option>
+<option value="iso-8859-6">ISO/IEC 8859-6 (Latin/Arabic)</option>
+<option value="iso-8859-7">ISO/IEC 8859-7 (Latin/Greek)</option>
+<option value="iso-8859-8">ISO/IEC 8859-8 (Latin/Hebrew)</option>
+<option value="iso-8859-9">ISO/IEC 8859-9 (Latin-5 Turkish)</option>
+<option value="iso-8859-10">ISO/IEC 8859-10 (Latin-6 Nordic)</option>
+<option value="iso-8859-11">ISO/IEC 8859-11 (Latin/Thai)</option>
+<option value="iso-8859-13">ISO/IEC 8859-13 (Latin-7 Baltic Rim)</option>
+<option value="iso-8859-14">ISO/IEC 8859-14 (Latin-8 Celtic)</option>
+<option value="iso-8859-15">ISO/IEC 8859-15 (Latin-9)</option>
+<option value="iso-8859-16">ISO/IEC 8859-16 (Latin-10 Fantasy mix)</option>
+<option value="UTF-8">UTF-8 (Unicode 8-bit)</option>
+</select>
+</p>
+
+
+<div id="tabWeighIn_division_helper_dialog">
+<table>
+<thead>
+<tr><th>Division</th><th>Description</th></tr>
+</thead>
+<tbody id="tabWeighIn_division_helper_table"></tbody>
+</table>
+</div>
+

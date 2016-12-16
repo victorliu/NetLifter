@@ -1,0 +1,17 @@
+<h1>Results</h1>
+
+This file is organized by division and sorted by weight class, and then sorted by total within each weight class.
+<input type="button" name="Download current results sheet" value="Download current results sheet" onclick="export_download()">
+
+<h1>Autosave</h1>
+
+Autosave saves to in-browser storage, so if the browser crashes, your data will be preserved. It is not as reliable as saving the full program state below.
+
+<input type="button" name="Autosave" value="Autosave" onclick="btnAutosave_clicked()">
+<input type="button" name="Load Autosave" value="Load Autosave" onclick="btnLoadAutosave_clicked()">
+<input type="button" name="Clear Autosave" value="Clear Autosave" onclick="btnClearAutosave_clicked()"><br>
+
+<h1>Save full program state</h1>
+<input type="button" name="Save State" value="Save State" onclick="btnSaveState_clicked()"><br>
+<input type="file" id="fileLoadState" accept="*.json">
+<input type="button" name="Load State" value="Load State" onclick="btnLoadState_clicked()">

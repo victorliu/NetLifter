@@ -1,0 +1,119 @@
+<div onclick="hide_dialogs()">
+
+<div id="secCurrentDisplay"">
+
+<table><tr><td valign="top">
+<table width="550px"><tbody id="tbdCurLifterInfo">
+	<tr class="curLifterInfo">
+		<td width="400" colspan="2"><div id="curLifterName">First Last</div></td>
+		<td width="224"><div id="curLifterDivision">M-OR</div></td>
+	</tr>
+	<tr class="curLifterInfo">
+		<td width="130"><div id="curLifterAge">26</div></td>
+		<td width="250"><div id="curLifterBodyWeight">100</div></td>
+		<td width="250"><div id="curLifterWeightClass">100</div></td>
+	</tr>
+	<tr class="curLifterInfo">
+		<td width="200"><div id="curLift">Squat 1</div></td>
+		<td width="400"><div><span id="curWeight"></span><br><span id="curWeightOtherUnit">0</span></div></td>
+		<td width="400"><div id="curRackHeight">6-2</div></td>
+	</tr>
+</tbody>
+</table>
+
+<div id="timerbox">
+<input type="text" name="timerMin" id="txtTimerMin" value="1" size="3">:<input type="text" name="timerSec" id="txtTimerSec" size="3">
+<input type="button" value="Reset" onclick="btnTimerReset_clicked()">
+<input type="button" value="Start" id="btnTimerStartStop" onclick="btnTimerStartStop_clicked()">
+<span id="timer">1:00</div>
+</div>
+
+<div id="secCurrentSelection">
+
+<form action="">
+Flight:
+<select id="selFlight" onchange="selFlight_changed()">
+	<option value="A">A</option>
+	<option value="B">B</option>
+	<option value="C">C</option>
+	<option value="D">D</option>
+	<option value="E">E</option>
+	<option value="F">F</option>
+</select>
+Lift:
+<select id="selLift" onchange="selLift_changed()">
+	<option value="SQ">Squat</option>
+	<option value="BP">Bench</option>
+	<option value="DL">Deadlift</option>
+</select>
+Attempt:
+<select id="selAttempt" onchange="selAttempt_changed()">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+</select><br>
+Lifter:
+<select id="selLifter" onchange="selLifter_changed()">
+<option value="0">First Last</option></select>
+
+<input type="button" value="GOOD" onclick="btnGOOD_clicked()">
+<input type="button" value="NOLIFT" onclick="btnNOLIFT_clicked()">
+
+</form>
+
+
+</div> <!-- id="secCurrentSelection" -->
+
+
+</td><td>
+
+<canvas id="myCanvas" width="450" height="230"></canvas>
+
+</td></tr></table>
+
+
+</div> <!-- id="secCurrentDisplay" -->
+
+
+
+
+
+<div id="tabLifting_tabLifterInfo"></div>
+
+
+<div id="secTableDisplay">
+<table id="tabLifting_tabDisplay">
+<thead id="thdLifterInfo">
+</thead>
+<tbody id="tbdLifterInfo">
+</tbody>
+</table>
+
+
+<div id="dlgEntry">
+	<span id="dlgEntryLabel"></span>: <input type="text" name="value" id="txtEntry" onfocus="this.select();"><br>
+	<input type="button" name="Save" value="Save" id="btnEntrySave">
+	<input type="button" name="Cancel" value="Cancel" onclick="dlgEntryCancel_clicked()">
+</div>
+
+<div id="dlgEntryAttempt">
+	<span id="dlgEntryAttemptLabel"></span>: <input type="text" name="value" id="txtEntryAttempt" onfocus="this.select();"><br>
+	<input type="radio" name="Status" value="0" id="radEntryAttemptStatusNotAttempted"> Not attempted<br>
+	<input type="radio" name="Status" value="1" id="radEntryAttemptStatusGood"> Good<br>
+	<input type="radio" name="Status" value="-1" id="radEntryAttemptStatusNoLift"> No lift<br>
+	<input type="radio" name="Status" value="-2" id="radEntryAttemptStatusScratch"> Scratch<br>
+	<input type="button" name="Save" value="Save" id="btnEntryAttemptSave">
+	<input type="button" name="Cancel" value="Cancel" onclick="dlgEntryAttemptCancel_clicked()">
+</div>
+
+<div id="dlgEntryRowIndicator">&nbsp;&nbsp;&nbsp;</div>
+
+
+</div> <!-- id="secTableDisplay" -->
+
+
+
+
+
+</div>
