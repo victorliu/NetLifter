@@ -1,3 +1,13 @@
+/*
+Sort order:
+flight (current at top, then in cyclic order afterwards) [2 digits]
+scratched? (not scratched at top) [1 digit]
+completed current lift? (yes at top) [1 digit, combined with scratched?]
+last non-nil weight (lighter at top) [x2, 5 digits]
+lot number (smaller at top) [3 digits]
+index in lifter_info (smaller at top) [3 digits, combined with lot number]
+*/
+
 function tabLifting_update_display(){
 	hide_dialogs();
 	tabLifting_update_toolbar();
@@ -75,7 +85,8 @@ function tabLifting_update_display(){
 		document.getElementById('curLifterName').innerHTML = textify(curlifter.name);
 		document.getElementById('curLifterBodyWeight').innerHTML = textify(body_weight);
 		document.getElementById('curLifterBodyWeight').className = 'weight' + state.body_weight_units;
-		document.getElementById('curLifterWeightClass').innerHTML = textify(get_weight_class(curlifter));
+		weight_class_text = textify(get_weight_class(curlifter));
+		document.getElementById('curLifterWeightClass').innerHTML = weight_class_text;
 		document.getElementById('curLifterWeightClass').className = 'weight' + state.weight_class_units;
 		document.getElementById('curLifterAge').innerHTML = textify(curlifter.age);
 		document.getElementById('curLifterDivision').innerHTML = textify(curlifter.division);
@@ -89,9 +100,7 @@ function tabLifting_update_display(){
 		}
 		document.getElementById('curRackHeight').innerHTML = textify(rack_height);
 	}
-
 	drawPlates(cur_attempt_weight);
-
 	drawTable(state.current.lifters);
 }
 function get_column_header(colname){
@@ -121,11 +130,8 @@ function get_weight_class(curlifter){
 	var i = 0;
 	var ret = '';
 	for(i = 0; i < m; ++i){
-		if(body_weight <= cls[i]){
-			ret = cls[i];
-			break;
-		}else if("string" === typeof cls[i] && cls[i].match(/\+/)){
-			ret = 'SHW';
+		if(body_weight <= cls[i] || ("string" === typeof cls[i] && cls[i].match(/\+/))){
+			ret = weight_class_string(cls[i]);
 			break;
 		}
 	}
@@ -172,6 +178,11 @@ function get_subtotal(curlifter){
 }
 function get_total(curlifter){
 	return get_subtotal(curlifter);
+}
+function get_wilks_total(curlifter){
+	var wilks = get_wilks(curlifter);
+	var tot   = get_total(curlifter);
+	return wilks*tot;
 }
 
 function cell_clicked(ev, id, colname, row_index){
@@ -248,7 +259,6 @@ function cell_attempt_clicked(ev, id, lift_attempt, row_index){
 		var my_lift_attempt = lift_attempt;
 		return function(){ return dlgEntryAttemptSave_clicked(my_id, my_lift_attempt); }
 	})();
-	document.getElementById('txtEntryAttempt').focus();
 	if(ev.stopPropagation){ ev.stopPropagation(); }
 
 	var rect = show_row_indicator(row_index);
@@ -261,6 +271,7 @@ function cell_attempt_clicked(ev, id, lift_attempt, row_index){
 		var rect_dlg = dlg.getBoundingClientRect();
 		dlg.style.top = rect.bottom-rect_dlg.height-rect0.top + "px";
 	}
+	document.getElementById('txtEntryAttempt').focus();
 
 	return false;
 }
@@ -276,16 +287,31 @@ function show_row_indicator(idx){
 	return ind.getBoundingClientRect();
 }
 
+/*
+Sort order:
+flight (current at top, then in cyclic order afterwards) [2 digits]
+any scratched? (not scratched at top) [1 digit]
+completed current lift? (yes at top) [1 digit, combined with scratched?]
+last non-nil weight (lighter at top) [x2, 5 digits]
+lot number (smaller at top) [3 digits]
+index in lifter_info (smaller at top) [3 digits, combined with lot number]
+*/
 function sort_by_weight(a,b){ // a and b are lifter id's
 	var lift_attempt = state.current.lift + "_" + state.current.attempt;
-	var lift_attempt_next = state.current.lift + "_" + (state.current.attempt+1);
+	var lift_attempt_next = state.current.lift + "_" + (Number(state.current.attempt)+1);
 	var awn = Number(state.lifter_info[a][lift_attempt_next]);
 	var bwn = Number(state.lifter_info[b][lift_attempt_next]);
 	var as = state.lifter_info[a][lift_attempt + "_state"];
 	var bs = state.lifter_info[b][lift_attempt + "_state"];
 	var aw = Number(state.lifter_info[a][lift_attempt]);
 	var bw = Number(state.lifter_info[b][lift_attempt]);
-	const tie_breaker = (Number(state.lifter_info[a].lot_number) - Number(state.lifter_info[b].lot_number));
+	var tie_breaker = (Number(state.lifter_info[a].lot_number) - Number(state.lifter_info[b].lot_number));
+	if(0 == tie_breaker){
+		tie_breaker = (Number(state.lifter_info[a].weight) - Number(state.lifter_info[b].weight));
+	}
+	if(0 == tie_breaker){
+		tie_breaker = ((state.lifter_info[a].name) < (state.lifter_info[b].name)) ? -1 : 1;
+	}
 
 	// partition by whether lifter is doing current lift
 	var a_doing_this_lift = events_contains(state.lifter_info[a].which_lifts, state.current.lift);
@@ -295,7 +321,6 @@ function sort_by_weight(a,b){ // a and b are lifter id's
 	}else if(!a_doing_this_lift && b_doing_this_lift){
 		return 1;
 	}
-
 	// partition by whether current lift has been performed
 	if(!lift_state_completed(as) && lift_state_completed(bs)){
 		return 1;
@@ -672,54 +697,41 @@ function get_next_lifter(id_curr){
 	}while(-1 != id_next && LIFT_STATE.SCRATCH == state.lifter_info[id_next][lift_attempt+"_state"]);
 	return id_next;
 }
-function get_next_weight(id_curr){
+function get_next_lifter_id(){ // returns next attempt number
+	var attempt_number = state.current.attempt;
+	if(attempt_number > 4){ return attempt_number; } // safeguard to prevent infinite loops
 	const m = state.current.lifters.length;
-	var current_attempt = state.current.attempt;
-	var id_next = -1;
-	var lift_attempt;
-	do{
-		if(current_attempt > 4){ return -1; }
-		lift_attempt = state.current.lift + "_" + current_attempt;
 
-		// advance
+	// Find first entry in current.lifters who has not completed current lift_attempt
+	var found = false;
+	do{
+		lift_attempt = state.current.lift + "_" + attempt_number;
 		for(var i = 0; i < m; ++i){
-			if(id_curr == state.current.lifters[i]){
-				if(i+1 == m){
-					current_attempt++;
-					lift_attempt = state.current.lift + "_" + current_attempt;
-					id_next = state.current.lifters[0];
-				}else{
-					id_next = state.current.lifters[i+1];
-				}
-				break;
+			var id = state.current.lifters[i];
+			var la  = state.lifter_info[id][lift_attempt];
+			var las = state.lifter_info[id][lift_attempt + '_state'];
+			if(la && (LIFT_STATE.NOT_ATTEMPTED == las || !las) && (LIFT_STATE.SCRATCH != las)){
+				return { id: state.current.lifters[i], attempt: attempt_number };
 			}
 		}
-		// keep advancing if scratched
-	}while(-1 != id_next && LIFT_STATE.SCRATCH == state.lifter_info[id_next][lift_attempt+"_state"]);
-	if(!state.lifter_info[id_next]){ return 0; }
-	return state.lifter_info[id_next][lift_attempt];
+		if(!found){
+			attempt_number++;
+		}
+	}while(!found && attempt_number <= 4);
+	return { id: -1, attempt: attempt_number };
+}
+function get_next_weight(id_curr){
+	var data = get_next_lifter_id();
+	if(data.id >= 0){
+		lift_attempt = state.current.lift + "_" + data.attempt;
+		return state.lifter_info[data.id][lift_attempt];
+	}
 }
 function advance_lifter(){
-	if(state.current.attempt > 4){ return; } // safeguard to prevent infinite loops
-	const m = state.current.lifters.length;
-	const lift_attempt = state.current.lift + "_" + state.current.attempt;
-
-	// advance
-	for(var i = 0; i < m; ++i){
-		if(state.current.lifter_id == state.current.lifters[i]){
-			if(i+1 == m){
-				state.current.attempt++;
-				tabLifting_update_display(); // call this to update current.lifters
-				state.current.lifter_id = state.current.lifters[0];
-			}else{
-				state.current.lifter_id = state.current.lifters[i+1];
-			}
-			break;
-		}
-	}
-	// keep advancing if scratched
-	if(-2 == state.lifter_info[state.current.lifter_id][lift_attempt+"_state"]){
-		advance_lifter();
+	var data = get_next_lifter_id();
+	if(data.id >= 0){
+		state.current.lifter_id = data.id;
+		state.current.attempt = data.attempt;
 	}
 }
 function set_lift_state(good_or_not){

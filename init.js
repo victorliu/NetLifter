@@ -60,7 +60,8 @@ const computed_columns = {
 	BP_best: get_best_BP,
 	DL_best: get_best_DL,
 	subtotal: get_subtotal,
-	total: get_total
+	total: get_total,
+	wilks_total: get_wilks_total
 };
 const import_columns = [
 	'flight',
@@ -79,10 +80,12 @@ const export_columns = [
 	'name',
 	'division',
 	'weight_class',
+	'which_lifts',
+	'total',
+	'wilks_total',
 	'weight',
 	'age',
 	'dob',
-	'which_lifts',
 	'SQ_rack','BP_rack',
 	'state',
 	'team',
@@ -93,7 +96,6 @@ const export_columns = [
 	'SQ_1','SQ_2','SQ_3', 'SQ_best',
 	'BP_1','BP_2','BP_3', 'BP_best',
 	'DL_1','DL_2','DL_3', 'DL_best',
-	'total',
 	'SQ_4','BP_4','DL_4'
 ];
 const displayed_columns = {

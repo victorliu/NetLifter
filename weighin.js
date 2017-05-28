@@ -94,7 +94,7 @@ function tabWeighIn_update_display(){
 		}
 		if(best > 0){
 			document.getElementById("txtLifterCard" + curlift + "_best").value = best;
-			total += best;
+			total += Number(best);
 		}
 	}
 	if(total > 0){

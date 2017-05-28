@@ -1,14 +1,11 @@
-function escape_Excel(val){
-	if(val.indexOf('-') > 0){
-		return '"=""' + val.replace('"','""') + '"""';
+
+function escape_CSV(val){
+	var str = '' + val;
+	if(str.indexOf('-') > 0 || str.indexOf('/') > 0){
+		return '"=""' + str.replace('"','""') + '"""';
+		//return '"' + str.replace('"','""') + '"';
 	}
-	return '' + val;
-}
-function escale_CSV(val){
-	if(val.indexOf('-') > 0){
-		return '"' + val.replace('"','""') + '"';
-	}
-	return '' + val;
+	return str;
 }
 function textify(stuff){
 	if(stuff){ return '' + stuff; }
@@ -21,8 +18,10 @@ function get_timestamp(){
 	var mm = today.getMonth()+1;
 	if(mm < 10){ mm = '0' + mm; }else{ mm = '' + mm; }
 	var yyyy = today.getFullYear();
-	var hh = '' + today.getHours();
+	var hh = today.getHours();
+	if(hh < 10){ hh = '0' + hh; }else{ hh = '' + hh; }
 	var mn = '' + today.getMinutes();
+	if(mn < 10){ mn = '0' + mn; }else{ mn = '' + mn; }
 	return ('' + yyyy + mm + dd + '-' + hh + mn);
 }
 
@@ -59,12 +58,15 @@ function weight_unit_string(unit){
 	return unit.toLowerCase();
 }
 function is_SHW(weight_class){
+	return isNaN(weight_class);
+	/*
 	if(typeof weight_class === 'number'){ return false; }
 	return weight_class.indexOf('+') >= 0;
+	*/
 }
 function weight_class_string(weight_class){
 	if(is_SHW(weight_class)){
-		return 'SHW';
+		return '' + weight_class;
 	}else{
 		return '' + weight_class;
 	}

@@ -10,7 +10,7 @@ function btnLoadState_clicked(){
 		var textFromFileLoaded = fileLoadedEvent.target.result;
 		state = JSON.parse(textFromFileLoaded);
 		add_computed_columns();
-		update_display();
+		tabLifting_update_display();
 	};
 	fileReader.readAsText(fileToLoad, "UTF-8");
 }
@@ -42,7 +42,7 @@ function btnAutosave_clicked(){
 }
 function btnLoadAutosave_clicked(){
 	autoload();
-	update_display();
+	tabLifting_update_display();
 }
 function btnClearAutosave_clicked(){
 	localStorage.removeItem("state");
@@ -94,18 +94,21 @@ function export_download(){
 			for(colidx in export_columns){
 				const colname = export_columns[colidx];
 				if("function" === typeof state.lifter_info[id][colname]){
-					csv += (state.lifter_info[id][colname](state.lifter_info[id]) + ',');
+					csv += (state.lifter_info[id][colname](state.lifter_info[id]));
 				}else{
 					field = '';
 					if(-1 == (state.lifter_info[id][colname + '_state'])){
-						field = ('-' + state.lifter_info[id][colname] + ',');
+						field = ('-' + state.lifter_info[id][colname]);
 					}else{
 						if(state.lifter_info[id][colname]){
 							field = state.lifter_info[id][colname];
 						}
 					}
-					csv += escape_Excel(field) + ',';
+					if(field){
+						csv += escape_CSV(field);
+					}
 				}
+				csv += ',';
 			}
 			csv += "\n";
 		}
