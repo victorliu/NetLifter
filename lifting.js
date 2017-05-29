@@ -290,8 +290,9 @@ function show_row_indicator(idx){
 /*
 Sort order:
 flight (current at top, then in cyclic order afterwards) [2 digits]
+doing this lift? (yes at top) [1 digit]
 any scratched? (not scratched at top) [1 digit]
-completed current lift? (yes at top) [1 digit, combined with scratched?]
+completed current lift? (yes at top) [1 digit, combined with doing-this-lift? and any-scratched?]
 last non-nil weight (lighter at top) [x2, 5 digits]
 lot number (smaller at top) [3 digits]
 index in lifter_info (smaller at top) [3 digits, combined with lot number]
@@ -316,21 +317,32 @@ function sort_by_weight(a,b){ // a and b are lifter id's
 	// partition by whether lifter is doing current lift
 	var a_doing_this_lift = events_contains(state.lifter_info[a].which_lifts, state.current.lift);
 	var b_doing_this_lift = events_contains(state.lifter_info[b].which_lifts, state.current.lift);
-	if(a_doing_this_lift && !b_doing_this_lift){
-		return -1;
-	}else if(!a_doing_this_lift && b_doing_this_lift){
-		return 1;
+	if( a_doing_this_lift && !b_doing_this_lift){ return -1; }
+	if(!a_doing_this_lift &&  b_doing_this_lift){ return  1; }
+	
+	// partition by whether any scratched
+	var a_scratched = false;
+	var b_scratched = false;
+	var a_last_weight = 9999;
+	var b_last_weight = 9999;
+	for(var i = 0; i < 3; ++i){
+		var la = state.current.lift + "_" + i;
+		if(LIFT_STATE.SCRATCH == state.lifter_info[a][la + "_state"]){ a_scratched = true; }
+		if(state.lifter_info[a][la]){ a_last_weight = state.lifter_info[a][la]; }
+		if(LIFT_STATE.SCRATCH == state.lifter_info[b][la + "_state"]){ b_scratched = true; }
+		if(state.lifter_info[b][la]){ b_last_weight = state.lifter_info[b][la]; }
 	}
+	if(!a_scratched &&  b_scratched){ return -1; }
+	if( a_scratched && !b_scratched){ return  1; }
+	
 	// partition by whether current lift has been performed
-	if(!lift_state_completed(as) && lift_state_completed(bs)){
-		return 1;
-	}else if(lift_state_completed(as) && !lift_state_completed(bs)){
-		return -1;
+	if( lift_state_completed(as) && !lift_state_completed(bs)){ return -1; }
+	if(!lift_state_completed(as) &&  lift_state_completed(bs)){ return  1; }
+	
+	if(state.lifter_info[a].flight != state.current.flight){
+		if(a_last_weight != b_last_weight){ return a_last_weight - b_last_weight; }
 	}
-	if(!lift_state_completed(as)){
-		if(aw && !bw){ return -1; }
-		else if(!aw && bw){ return 1; }
-	}
+	
 	if(!lift_state_completed(as) || (!awn && !bwn)){ // both have yet to complete current lift, or both have no next attempts
 		// put scratches at end
 		if(LIFT_STATE.SCRATCH == as && LIFT_STATE.SCRATCH != bs){
@@ -786,18 +798,18 @@ function dlgEntryAttemptSave_clicked(id, lift_attempt){
 	state.lifter_info[id][lift_attempt] = document.getElementById('txtEntryAttempt').value;
 	check_attempt_weight(state.lifter_info[id][lift_attempt]);
 	if(document.getElementById('radEntryAttemptStatusNotAttempted').checked){
-		state.lifter_info[id][lift_attempt + "_state"] = 0;
+		state.lifter_info[id][lift_attempt + "_state"] = LIFT_STATE.NOT_ATTEMPTED;
 	}else if(document.getElementById('radEntryAttemptStatusGood').checked){
-		state.lifter_info[id][lift_attempt + "_state"] = 1;
+		state.lifter_info[id][lift_attempt + "_state"] = LIFT_STATE.GOOD;
 	}else if(document.getElementById('radEntryAttemptStatusNoLift').checked){
-		state.lifter_info[id][lift_attempt + "_state"] = -1;
+		state.lifter_info[id][lift_attempt + "_state"] = LIFT_STATE.NO_LIFT;
 	}else if(document.getElementById('radEntryAttemptStatusScratch').checked){
-		state.lifter_info[id][lift_attempt + "_state"] = -2;
+		state.lifter_info[id][lift_attempt + "_state"] = LIFT_STATE.SCRATCH;
 		state.lifter_info[id][lift_attempt] = "--";
 		if('2' == lift_attempt[lift_attempt.length-1]){
 			var key = lift_attempt.substring(0, lift_attempt.length-1) + "3";
 			state.lifter_info[id][key] = "--";
-			state.lifter_info[id][key + "_state"] = -2;
+			state.lifter_info[id][key + "_state"] = LIFT_STATE.SCRATCH;
 		}
 	}
 	dlg.style.display = 'none';

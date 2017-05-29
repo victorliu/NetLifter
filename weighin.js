@@ -136,8 +136,8 @@ function tabWeighIn_update_listbox(){
 		opt.appendChild(document.createTextNode(optname));
 		opt.value = id;
 		c.appendChild(opt);
-		if(prev_selected == i){
-			c.selectedIndex = i;
+		if(prev_selected == i+1){
+			c.selectedIndex = i+1;
 		}
 	}
 }
@@ -290,12 +290,20 @@ function radLifterCard_Scratch_clicked(lift, attempt){
 
 function tabWeighIn_division_helper_dialog_toggle(want_toggle){
 	var d = document.getElementById('tabWeighIn_division_helper_dialog');
-	if(d.style.display != 'none' && want_toggle){
-		d.style.display = 'fixed';
+	if(d.style.visibility == 'hidden' && want_toggle){
+		// Populate table
+		var tnew = document.getElementById('tabWeighIn_division_helper_table');
+		tnew.innerHTML = '';
+		for(var key in state.divisions){
+			var row = tnew.insertRow(tnew.rows.length);
+			row.insertCell(0).appendChild(document.createTextNode(key));
+			row.insertCell(1).appendChild(document.createTextNode(state.divisions[key]));
+		}
+		d.style.visibility = 'visible';
 		d.style.left = 0;
 		d.style.top = 0;
 	}else{
-		d.style.display = 'none';
+		d.style.visibility = 'hidden';
 	}
 }
 function btnLifterCardDivisionHelper_clicked(){
